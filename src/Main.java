@@ -27,12 +27,12 @@ public class Main {
         taskManager.createSubtask(subtask2);
         Subtask subtask3 = new Subtask("subNew3", "subText3", epic2.getId());
         taskManager.createSubtask(subtask3);
-        arrayListTask = taskManager.getAllTask();
-        arrayListEpic = taskManager.getAllEpic();
-        arrayListSubtask = taskManager.getAllSubtask();
-        taskManager.printAllTask();
-        taskManager.printAllEpic();
-        taskManager.printAllSubtask();
+        arrayListTask = taskManager.getAllTasks();
+        arrayListEpic = taskManager.getAllEpics();
+        arrayListSubtask = taskManager.getAllSubtasks();
+        taskManager.printAllTasks();
+        taskManager.printAllEpics();
+        taskManager.printAllSubtasks();
 
         System.out.println("\n\u001B[32m" + "TEST UPDATE + READ_ALL" + "\u001B[38m");
         task1.setStatus(Status.IN_PROGRESS);
@@ -45,12 +45,12 @@ public class Main {
         taskManager.updateSubtask(subtask2); //Subtask{id=7, title='subNew2', text='subText2', status='DONE', epicId=2}
         subtask3.setStatus(Status.DONE);
         taskManager.updateSubtask(subtask3); //Subtask{id=8, title='subNew3', text='subText3', status='DONE', epicId=3}
-        arrayListTask = taskManager.getAllTask();
-        arrayListEpic = taskManager.getAllEpic();
-        arrayListSubtask = taskManager.getAllSubtask();
-        taskManager.printAllTask();
-        taskManager.printAllEpic();
-        taskManager.printAllSubtask();
+        arrayListTask = taskManager.getAllTasks();
+        arrayListEpic = taskManager.getAllEpics();
+        arrayListSubtask = taskManager.getAllSubtasks();
+        taskManager.printAllTasks();
+        taskManager.printAllEpics();
+        taskManager.printAllSubtasks();
 
         System.out.println("\n\u001B[32m" + "TEST READ_ONE_BY_ID" + "\u001B[38m");
         Task readTask1 = taskManager.getOneTask(1);
@@ -63,7 +63,7 @@ public class Main {
         taskManager.printOneSubtask(4);//SUBTASK WITH ID 4 NOT FOUND
 
         System.out.println("\n\u001B[32m" + "TEST READ_ALL_SUBTASK_BY_ID_EPIC" + "\u001B[38m");
-        arrayListSubtask = taskManager.getAllSubtaskByEpicId(3);
+        arrayListSubtask = taskManager.getAllSubtasksByEpicId(3);
         taskManager.printOneSubtask(6); //Subtask{id=6, title='subNew1', text='subText1', status='IN_PROGRESS', epicId=2}
         taskManager.printOneSubtask(7); //Subtask{id=7, title='subNew2', text='subText2', status='DONE', epicId=2}
 
@@ -77,12 +77,12 @@ public class Main {
         taskManager.printOneSubtask(8); //SUBTASK WITH ID 8 NOT FOUND
 
         System.out.println("\n\u001B[32m" + "TEST DELETE_ALL + READ_ALL" + "\u001B[38m");
-        taskManager.deleteAllTask();
-        taskManager.printAllTask(); //TASKS NOT FOUND!
-        taskManager.deleteAllSubtask();
-        taskManager.printAllSubtask(); //SUBTASKS NOT FOUND!
+        taskManager.deleteAllTasks();
+        taskManager.printAllTasks(); //TASKS NOT FOUND!
+        taskManager.deleteAllSubtasks();
+        taskManager.printAllSubtasks(); //SUBTASKS NOT FOUND!
         taskManager.printOneEpic(3); //Epic{id=3, title='epicNew1', text='null', status='NEW', listSubtasksId=[[]]}
-        taskManager.deleteAllEpic();
-        taskManager.printAllEpic(); //EPIC TASKS NOT FOUND!
+        taskManager.deleteAllEpics();
+        taskManager.printAllEpics(); //EPIC TASKS NOT FOUND!
     }
 }

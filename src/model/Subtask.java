@@ -2,8 +2,8 @@ package model;
 
 public class Subtask extends Task {
     private Integer epicId;
-    public Subtask(String title, String text, Integer epicId) {
-        super(title, text);
+    public Subtask(String name, String text, Integer epicId) {
+        super(name, text);
         this.epicId = epicId;
     }
     public Integer getEpicId() {
@@ -16,10 +16,10 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         return "Subtask{" +
-                "id=" + getId() +
-                ", title='" + getTitle() + '\'' +
-                ", text='" + getText() + '\'' +
-                ", status='" + getStatus() + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", text='" + text + '\'' +
+                ", status='" + status + '\'' +
                 ", epicId=" + epicId +
                 '}';
     }

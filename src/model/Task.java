@@ -1,13 +1,13 @@
 package model;
 
 public class Task {
-    private Integer id;
-    private String title;
-    private String text;
-    private Status status;
+    protected Integer id;
+    protected String name;
+    protected String text;
+    protected Status status;
 
-    public Task(String title, String text) {
-        this.title = title;
+    public Task(String name, String text) {
+        this.name = name;
         this.text = text;
         status = Status.NEW;
     }
@@ -20,12 +20,12 @@ public class Task {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getText() {
@@ -48,7 +48,7 @@ public class Task {
     public String toString() {
         return "Task{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
+                ", name='" + name + '\'' +
                 ", text='" + text + '\'' +
                 ", status=" + status +
                 '}';
