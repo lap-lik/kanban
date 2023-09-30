@@ -1,13 +1,10 @@
 import model.*;
-import service.HistoryManager;
 import service.Managers;
 import service.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
         TaskManager taskManager = Managers.getDefault();
-        HistoryManager historyManager = Managers.getDefaultHistory();
-
 
         System.out.println("\n\u001B[32m" + "TEST CREATE_13_TASKS_THROUGH_INTERFACE + PRINT_ALL" + "\u001B[38m");
         Task task1 = new Task("taskNew1", "taskText1");
@@ -50,8 +47,10 @@ public class Main {
         taskManager.getOneTask(task5.getId());
         taskManager.getOneTask(task6.getId());
 
-        System.out.println("HISTORY_SIZE: " + historyManager.getHistory().size());
-        historyManager.getHistory().forEach(System.out::println);
+
+
+        System.out.println("HISTORY_SIZE: " + taskManager.getHistoryManger().getHistory().size());
+        taskManager.getHistoryManger().getHistory().forEach(System.out::println);
 
         System.out.println("\n\u001B[32m" + "TEST GET_ONE_BY_ID MORE_FOUR_TASKS + PRINT_HISTORY" + "\u001B[38m");
         taskManager.getOneTask(task7.getId());
@@ -59,16 +58,15 @@ public class Main {
         taskManager.getOneTask(task9.getId());
         taskManager.getOneTask(task10.getId());
 
-        System.out.println("HISTORY_SIZE: " + historyManager.getHistory().size());
-        historyManager.getHistory().forEach(System.out::println);
-
+        System.out.println("HISTORY_SIZE: " + taskManager.getHistoryManger().getHistory().size());
+        taskManager.getHistoryManger().getHistory().forEach(System.out::println);
 
         System.out.println("\n\u001B[32m" + "TEST GET_ONE_BY_ID MORE_THREE_TASKS + PRINT_HISTORY" + "\u001B[38m");
         taskManager.getOneEpic(epic1.getId());
         taskManager.getOneSubtask(subtask1.getId());
         taskManager.getOneSubtask(subtask2.getId());
 
-        System.out.println("HISTORY_SIZE: " + historyManager.getHistory().size());
-        historyManager.getHistory().forEach(System.out::println);
+        System.out.println("HISTORY_SIZE: " + taskManager.getHistoryManger().getHistory().size());
+        taskManager.getHistoryManger().getHistory().forEach(System.out::println);
     }
 }
