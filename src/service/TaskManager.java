@@ -5,6 +5,8 @@ import model.*;
 import java.util.ArrayList;
 
 public interface TaskManager {
+
+    HistoryManager getHistoryManger();
     void createTask(Task task);
 
     void createEpic(Epic epic);
