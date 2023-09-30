@@ -98,21 +98,20 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getOneTask(Integer key) {
         Task task = taskMap.get(key);
         historyManager.add(task);
-//        Managers.getDefaultHistory().add(task);
         return task;
     }
 
     @Override
     public Epic getOneEpic(Integer key) {
         Epic epic = epicMap.get(key);
-        Managers.getDefaultHistory().add(epic);
+        historyManager.add(epic);
         return epic;
     }
 
     @Override
     public Subtask getOneSubtask(Integer key) {
         Subtask subtask = subtaskMap.get(key);
-        Managers.getDefaultHistory().add(subtask);
+        historyManager.add(subtask);
         return subtask;
     }
 
