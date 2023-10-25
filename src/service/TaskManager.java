@@ -3,9 +3,10 @@ package service;
 import model.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
-    HistoryManager getHistoryManger();
+    List<Task> getHistory();
 
     void createTask(Task task);
 
@@ -44,10 +45,4 @@ public interface TaskManager {
     void deleteOneEpic(Integer key);
 
     void deleteOneSubtask(Integer key);
-
-    void printAllTasks();
-
-    void printAllEpics();
-
-    void printAllSubtasks();
 }

@@ -2,23 +2,74 @@ package service;
 
 import model.Task;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    public static final int LIST_SIZE = 9;
-    private static final List<Task> history = new ArrayList<>();
+    private static final Map<Integer, Node> history = new HashMap<>();
+    private static Node first;
+    private static Node last;
+    static class Node {
+        Node prev;
+        Task task;
+        Node next;
+
+        public Node(Node prev, Task task, Node next) {
+            this.prev = prev;
+            this.task = task;
+            this.next = next;
+        }
+    }
+
     @Override
     public void add(Task task) {
-        if (history.size() > LIST_SIZE) {
-            history.remove(0);
-        }
-            history.add(task);
+        linkLast(task);
+    }
+
+    @Override
+    public void remove(int taskId) {
+        removeNode(history.remove(taskId));
     }
 
     @Override
     public List<Task> getHistory() {
-        return history;
+        return getTasks();
+    }
+
+    private void linkLast(Task task) {
+        Node temp = last;
+        Node newNode = new Node(temp, task, null);
+        last = newNode;
+        if (temp == null) {
+            first = newNode;
+        } else {
+            temp.next = newNode;
+            removeNode(history.remove(task.getId()));
+        }
+        history.put(task.getId(), newNode);
+    }
+
+    private void removeNode(Node node) {
+        if (node != null) {
+            if (node.next == null) {
+                last = node.prev;
+                last.next = null;
+            } else if (node.prev == null) {
+                first = node.next;
+                first.prev = null;
+            } else {
+                node.prev.next = node.next;
+                node.next.prev = node.prev;
+            }
+        }
+    }
+
+    private ArrayList<Task> getTasks() {
+        ArrayList<Task> tasks = new ArrayList<>();
+        Node temp = first;
+        while (temp != null) {
+            tasks.add(temp.task);
+            temp = temp.next;
+        }
+        return tasks;
     }
 }

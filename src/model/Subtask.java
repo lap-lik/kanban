@@ -22,7 +22,7 @@ public class Subtask extends Task {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", text='" + text + '\'' +
-                ", status='" + status + '\'' +
+                ", status=" + status +
                 ", epicId=" + epicId +
                 '}';
     }
