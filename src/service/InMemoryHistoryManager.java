@@ -8,17 +8,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     private static final Map<Integer, Node> history = new HashMap<>();
     private static Node first;
     private static Node last;
-    static class Node {
-        Node prev;
-        Task task;
-        Node next;
-
-        public Node(Node prev, Task task, Node next) {
-            this.prev = prev;
-            this.task = task;
-            this.next = next;
-        }
-    }
 
     @Override
     public void add(Task task) {
@@ -63,13 +52,25 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    private ArrayList<Task> getTasks() {
-        ArrayList<Task> tasks = new ArrayList<>();
+    private List<Task> getTasks() {
+        List<Task> tasks = new ArrayList<>();
         Node temp = first;
         while (temp != null) {
             tasks.add(temp.task);
             temp = temp.next;
         }
         return tasks;
+    }
+
+    static class Node {
+        Node prev;
+        Task task;
+        Node next;
+
+        public Node(Node prev, Task task, Node next) {
+            this.prev = prev;
+            this.task = task;
+            this.next = next;
+        }
     }
 }
