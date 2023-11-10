@@ -11,7 +11,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        linkLast(task);
+        if (task != null) {
+            linkLast(task);
+        }
     }
 
     @Override
@@ -44,7 +46,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             } else if (node.equals(first)) {
                 first = node.next;
                 first.prev = null;
-            }else if (node.equals(last)) {
+            } else if (node.equals(last)) {
                 last = node.prev;
                 last.next = null;
             } else {

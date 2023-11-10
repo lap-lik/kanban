@@ -10,9 +10,9 @@ public class Main {
         taskManager.createTask(task1);
         Task task2 = new Task("task2", "taskText2");
         taskManager.createTask(task2);
-        Epic epic1 = new Epic("epicNew1");
+        Epic epic1 = new Epic("epicNew1", "epicText1");
         taskManager.createEpic(epic1);
-        Epic epic2 = new Epic("epicNew2");
+        Epic epic2 = new Epic("epicNew2", "epicText2");
         taskManager.createEpic(epic2);
         Subtask subtask1 = new Subtask("subNew1", "subText1", epic1.getId());
         taskManager.createSubtask(subtask1);
@@ -34,7 +34,7 @@ public class Main {
 
         System.out.println("\n\u001B[32m" + "TEST: GET MORE TIMES TASK1 AND EPIC1 + PRINT_HISTORY " + "\u001B[38m");
         taskManager.getOneTask(task1.getId());
-        taskManager.getOneEpic(epic1.getId());
+        taskManager.getOneEpic(epic2.getId());
         historySize(taskManager);
         printHistory(taskManager);
 
@@ -52,6 +52,7 @@ public class Main {
         taskManager.deleteAllTasks();
         historySize(taskManager);
         printHistory(taskManager);
+
     }
     private static void historySize(TaskManager taskManager){
         System.out.println("History size: " + taskManager.getHistory().size());

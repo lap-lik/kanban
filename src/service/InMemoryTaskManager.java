@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
-    private Integer taskId = 0;
-    private final Map<Integer, Task> tasks = new HashMap<>();
-    private final Map<Integer, Epic> epics = new HashMap<>();
-    private final Map<Integer, Subtask> subtasks = new HashMap<>();
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected Integer id = 0;
+    protected final Map<Integer, Task> tasks = new HashMap<>();
+    protected final Map<Integer, Epic> epics = new HashMap<>();
+    protected final Map<Integer, Subtask> subtasks = new HashMap<>();
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public List<Task> getHistory() {
@@ -68,13 +68,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpic(Epic epic) {
         if (epic != null && epics.containsKey(epic.getId())) {
-            if (epic.getSubtasksIds().isEmpty()) {
-                epic.setStatus(Status.NEW);
-                epics.put(epic.getId(), epic);
-            } else {
-                epic.setStatus(checkStatus(epic));
-                epics.put(epic.getId(), epic);
-            }
+            epic.setStatus(checkStatus(epic));
+            epics.put(epic.getId(), epic);
         }
     }
 
@@ -183,13 +178,15 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private Integer createId() {
-        return ++taskId;
+        return ++id;
     }
 
-    private Status checkStatus(Epic epic) {
+    protected Status checkStatus(Epic epic) {
         Status status = epic.getStatus();
         List<Status> statuses = epic.getSubtasksIds().stream().map(e -> subtasks.get(e).getStatus()).collect(Collectors.toList());
-        if (statuses.size() == 1) {
+        if (statuses.isEmpty()) {
+            status = Status.NEW;
+        } else if (statuses.size() == 1) {
             status = statuses.get(0);
         } else if (!statuses.contains(Status.IN_PROGRESS) && !statuses.contains(Status.NEW)) {
             status = Status.DONE;
