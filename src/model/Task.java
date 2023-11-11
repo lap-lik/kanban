@@ -1,5 +1,7 @@
 package model;
 
+import service.Type;
+
 public class Task {
     protected Integer id;
     protected String name;
@@ -46,11 +48,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", text='" + text + '\'' +
-                ", status=" + status +
-                '}';
+        return String.format("%d,%s,%s,%s,%s,\n", id, Type.TASK, name
+                , status, text);
     }
 }

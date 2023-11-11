@@ -177,10 +177,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private Integer createId() {
-        return ++id;
-    }
-
     protected Status checkStatus(Epic epic) {
         Status status = epic.getStatus();
         List<Status> statuses = epic.getSubtasksIds().stream().map(e -> subtasks.get(e).getStatus()).collect(Collectors.toList());
@@ -196,5 +192,9 @@ public class InMemoryTaskManager implements TaskManager {
             status = Status.IN_PROGRESS;
         }
         return status;
+    }
+
+    private Integer createId() {
+        return ++id;
     }
 }

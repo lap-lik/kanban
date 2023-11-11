@@ -1,5 +1,7 @@
 package model;
 
+import service.Type;
+
 public class Subtask extends Task {
     private Integer epicId;
 
@@ -18,12 +20,6 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", text='" + text + '\'' +
-                ", status=" + status +
-                ", epicId=" + epicId +
-                '}';
+        return String.format("%d,%s,%s,%s,%s,%d\n", id, Type.SUBTASK, name, status, text, epicId);
     }
 }

@@ -2,9 +2,7 @@ id,type,name,status,description,epic
 1,TASK,task1,NEW,task1 from TaskManager-1,
 2,TASK,task2,NEW,task2 from TaskManager-1,
 7,TASK,task3,NEW,task3 from TaskManager-2,
-3,EPIC,epic1,NEW,epic1 from TaskManager-1,
+4,EPIC,epic2,NEW,epic2 from TaskManager-1,
 8,EPIC,epic3,NEW,epic3 from TaskManager-2,
-5,SUBTASK,sub1,NEW,sub1 from TaskManager-1,3
-6,SUBTASK,sub2,NEW,sub2 from TaskManager-1,3
 
-2,3,5,6,7,8,1
+2,4,7,8,1
