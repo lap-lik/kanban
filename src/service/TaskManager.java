@@ -1,13 +1,16 @@
 package service;
 
-import model.*;
+import model.Epic;
+import model.Subtask;
+import model.Task;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface TaskManager {
-    List<Task> getHistory();
-
     void createTask(Task task);
 
     void createEpic(Epic epic);
@@ -20,11 +23,11 @@ public interface TaskManager {
 
     void updateEpic(Epic epic);
 
-    ArrayList<Task> getAllTasks();
+    List<Task> getAllTasks();
 
-    ArrayList<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
-    ArrayList<Subtask> getAllSubtasks();
+    List<Subtask> getAllSubtasks();
 
     Task getOneTask(Integer key);
 
@@ -32,7 +35,13 @@ public interface TaskManager {
 
     Subtask getOneSubtask(Integer key);
 
-    ArrayList<Subtask> getAllSubtasksByEpicId(Integer key);
+    List<Subtask> getAllSubtasksByEpicId(Integer key);
+
+    List<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
+
+    Map<LocalDateTime, Boolean> getIntervalGrid();
 
     void deleteAllTasks();
 

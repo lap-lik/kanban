@@ -2,16 +2,48 @@ package model;
 
 import service.Type;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+import static constants.Constants.LOCAL_DATA_TIME_FORMAT;
+
 public class Task {
     protected Integer id;
     protected String name;
-    protected String text;
+    protected String description;
     protected Status status;
+    protected LocalDateTime startTime;
+    protected Duration duration;
 
-    public Task(String name, String text) {
+    public Task(String name, String description) {
         this.name = name;
-        this.text = text;
+        this.description = description;
         status = Status.NEW;
+    }
+
+    public Task(String name, String description, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        status = Status.NEW;
+        this.startTime = startTime;
+    }
+
+    public Task(String name, String description, LocalDateTime startTime, Duration duration) {
+        this.name = name;
+        this.description = description;
+        status = Status.NEW;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    public Task(Task task) {
+        id = task.getId();
+        name = task.getName();
+        description = task.getDescription();
+        status = task.getStatus();
+        startTime = task.getStartTime();
+        duration = task.getDuration();
     }
 
     public Integer getId() {
@@ -30,12 +62,20 @@ public class Task {
         this.name = name;
     }
 
-    public String getText() {
-        return text;
+    public String getDescription() {
+        return description;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Status getStatus() {
@@ -46,9 +86,49 @@ public class Task {
         this.status = status;
     }
 
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null) {
+            return null;
+        }
+        if (duration == null) {
+            return startTime;
+        }
+        return startTime.plus(duration);
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    protected String localDateTimeToString(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        }
+        return localDateTime.format(LOCAL_DATA_TIME_FORMAT);
+    }
+
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,\n", id, Type.TASK, name
-                , status, text);
+        return String.format("%d,%s,%s,%s,%s,%s,%d,\n", id, Type.TASK, name, status, description,
+                localDateTimeToString(startTime), duration.toMinutes());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof Task)) return false;
+        Task task = (Task) object;
+        return duration == task.duration && Objects.equals(id, task.id) &&
+                Objects.equals(name, task.name) && Objects.equals(description, task.description) &&
+                status == task.status && Objects.equals(startTime, task.startTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, status, startTime, duration);
     }
 }
