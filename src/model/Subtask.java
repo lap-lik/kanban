@@ -38,22 +38,36 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,%s,%d,%d\n", id, Type.SUBTASK, name, status, description,
-                localDateTimeToString(startTime), duration.toMinutes(), epicId);
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%d\n", id, Type.SUBTASK, name, status, description,
+                localDateTimeToString(startTime), durationToString(duration), epicId);
     }
 
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (!(object instanceof Subtask)) return false;
+        if (!super.equals(object)) return false;
         Subtask subtask = (Subtask) object;
-        return duration == subtask.duration && Objects.equals(id, subtask.id) &&
-                Objects.equals(name, subtask.name) && Objects.equals(description, subtask.description) &&
-                status == subtask.status && Objects.equals(startTime, subtask.startTime) &&
-                Objects.equals(epicId, subtask.epicId);
+        return Objects.equals(epicId, subtask.epicId);
     }
+
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, status, startTime, duration, epicId);
+        return Objects.hash(super.hashCode(), epicId);
     }
+
+//    @Override
+//    public boolean equals(Object object) {
+//        if (this == object) return true;
+//        if (!(object instanceof Subtask)) return false;
+//        Subtask subtask = (Subtask) object;
+//        return duration == subtask.duration && Objects.equals(id, subtask.id) &&
+//                Objects.equals(name, subtask.name) && Objects.equals(description, subtask.description) &&
+//                status == subtask.status && Objects.equals(startTime, subtask.startTime) &&
+//                Objects.equals(epicId, subtask.epicId);
+//    }
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id, name, description, status, startTime, duration, epicId);
+//    }
 }

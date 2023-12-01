@@ -1,23 +1,24 @@
 package service;
 
-import constants.Constants;
 import exception.ManagerSaveException;
+import model.Epic;
+import model.Subtask;
+import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static constants.Constants.FILE_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManagerTest<FileBackedTasksManager> {
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 
     File file;
 
@@ -45,8 +46,8 @@ public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManage
         super.createEpic_STANDART();
         assertTrue(file.exists(), "Файл не существует.");
         List<String> fileLines = readeFile();
-        String myLine1 = "2,EPIC,EPIC-1,NEW,EPIC-1-DESCRIPTION,";
-        assertEquals(myLine1, fileLines.get(2), "Эпик-1 записалась в файл не правильно.");
+        String myLine1 = "1,EPIC,EPIC-1,NEW,EPIC-1-DESCRIPTION,null,null,";
+        assertEquals(myLine1, fileLines.get(1), "Эпик-1 записалась в файл не правильно.");
     }
 
     @Override
@@ -87,8 +88,8 @@ public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManage
         super.updateEpic_STANDART();
         assertTrue(file.exists(), "Файл не существует.");
         List<String> fileLines = readeFile();
-        String myLine1 = "2,EPIC,EPIC-1-NEW,DONE,EPIC-1-DESCRIPTION-NEW,";
-        assertEquals(myLine1, fileLines.get(2), "Эпик-1 записалась в файл не правильно.");
+        String myLine1 = "2,EPIC,EPIC-1-NEW,DONE,EPIC-1-DESCRIPTION-NEW,10:15(01-02-2024),60,";
+        assertEquals(myLine1, fileLines.get(2), "Эпик-1 записалась в файл неправильно.");
     }
 
     @Override
@@ -98,7 +99,7 @@ public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManage
         assertTrue(file.exists(), "Файл не существует.");
         List<String> fileLines = readeFile();
         String myLine1 = "1";
-        assertEquals(myLine1, fileLines.get(5), "Список истории в файле не правильно.");
+        assertEquals(myLine1, fileLines.get(5), "Список истории в файле неправильно.");
     }
 
     @Override
@@ -108,7 +109,7 @@ public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManage
         assertTrue(file.exists(), "Файл не существует.");
         List<String> fileLines = readeFile();
         String myLine1 = "2";
-        assertEquals(myLine1, fileLines.get(5), "Список истории в файле не правильно.");
+        assertEquals(myLine1, fileLines.get(5), "Список истории в файле неправильно.");
     }
 
     @Override
@@ -118,7 +119,7 @@ public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManage
         assertTrue(file.exists(), "Файл не существует.");
         List<String> fileLines = readeFile();
         String myLine1 = "3";
-        assertEquals(myLine1, fileLines.get(5), "Список истории в файле не правильно.");
+        assertEquals(myLine1, fileLines.get(5), "Список истории в файле неправильно.");
     }
 
     @Override
@@ -127,7 +128,7 @@ public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManage
         super.deleteAllTasks_STANDART();
         assertTrue(file.exists(), "Файл не существует.");
         List<String> fileLines = readeFile();
-        assertEquals(3, fileLines.size(), "Количество записей в файле не правильное.");
+        assertEquals(3, fileLines.size(), "Количество записей в файле неправильное.");
     }
 
     @Override
@@ -136,7 +137,7 @@ public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManage
         super.deleteAllEpics_STANDART();
         assertTrue(file.exists(), "Файл не существует.");
         List<String> fileLines = readeFile();
-        assertEquals(2, fileLines.size(), "Количество записей в файле не правильное.");
+        assertEquals(2, fileLines.size(), "Количество записей в файле неправильное.");
     }
 
     @Override
@@ -145,7 +146,7 @@ public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManage
         super.deleteAllSubtasks_STANDART();
         assertTrue(file.exists(), "Файл не существует.");
         List<String> fileLines = readeFile();
-        assertEquals(5, fileLines.size(), "Количество записей в файле не правильное.");
+        assertEquals(5, fileLines.size(), "Количество записей в файле неправильное.");
     }
 
     @Override
@@ -154,7 +155,7 @@ public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManage
         super.deleteOneTask_STANDART();
         assertTrue(file.exists(), "Файл не существует.");
         List<String> fileLines = readeFile();
-        assertEquals(4, fileLines.size(), "Количество записей в файле не правильное.");
+        assertEquals(4, fileLines.size(), "Количество записей в файле неправильное.");
     }
 
     @Override
@@ -163,7 +164,7 @@ public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManage
         super.deleteOneEpic_STANDART();
         assertTrue(file.exists(), "Файл не существует.");
         List<String> fileLines = readeFile();
-        assertEquals(3, fileLines.size(), "Количество записей в файле не правильное.");
+        assertEquals(3, fileLines.size(), "Количество записей в файле неправильное.");
     }
 
     @Override
@@ -172,36 +173,52 @@ public class FileBackedTaskManagerTest<T extends TaskManager> extends TaskManage
         super.deleteOneSubtask_STANDART();
         assertTrue(file.exists(), "Файл не существует.");
         List<String> fileLines = readeFile();
-        assertEquals(6, fileLines.size(), "Количество записей в файле не правильное.");
+        assertEquals(6, fileLines.size(), "Количество записей в файле неправильное.");
     }
 
     @Test
     void loadFromFile() {
-        String checkTask1ToString = "1,TASK,TASK-1,NEW,TASK-1-DESCRIPTION,10:15(01-01-2024),30,\n";
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
-            bufferedWriter.write(Constants.COLUMNS + "\n");
-            bufferedWriter.write(checkTask1ToString);
-            bufferedWriter.write("\n");
-            bufferedWriter.write("1,2");
-        } catch (IOException exception) {
-            throw new ManagerSaveException("Не удалось сохранить в файл " + file.getName(), exception);
-        }
-        TaskManager taskManagerLoadFromFile = FileBackedTasksManager.loadFromFile(file);
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
 
-        assertEquals(checkTask1ToString, taskManagerLoadFromFile.getOneTask(1).toString(),
-                "При чтении из файла не правильно сохранилась задача в базе");
-        assertEquals(checkTask1ToString, taskManagerLoadFromFile.getPrioritizedTasks().get(0).toString(),
-                "При чтении из файла не правильно сохранилась задача в списке приоритетного вызова");
-        assertEquals(checkTask1ToString, taskManagerLoadFromFile.getHistory().get(0).toString(),
-                "При чтении из файла не правильно сохранилась задача в истории");
-    }
+        task1 = new Task("TASK-1", "TASK-1-DESCRIPTION",
+                LocalDateTime.of(2024, 1, 1, 10, 9), Duration.ofMinutes(16));
+        fileBackedTasksManager.createTask(task1);
+        Task task2 = new Task("TASK-2", "TASK-2-DESCRIPTION",
+                LocalDateTime.of(2024, 1, 2, 10, 28), Duration.ofMinutes(29));
+        fileBackedTasksManager.createTask(task2);
+        Task task3 = new Task("TASK-3", "TASK-3-DESCRIPTION",
+                LocalDateTime.of(2024, 1, 3, 10, 39), Duration.ofMinutes(47));
+        fileBackedTasksManager.createTask(task3);
 
-    private void deleteFile() {
-        try {
-            Files.delete(file.toPath());
-        } catch (IOException exception) {
-            throw new ManagerSaveException("Не удалось сохранить в файл " + file.getName(), exception);
-        }
+        epic1 = new Epic("EPIC-1", "EPIC-1-DESCRIPTION");
+        fileBackedTasksManager.createEpic(epic1);
+        Epic epic2 = new Epic("EPIC-2", "EPIC-2-DESCRIPTION");
+        fileBackedTasksManager.createEpic(epic2);
+
+        subtask1 = new Subtask("SUBTASK-1", "SUBTASK-1-DESCRIPTION",
+                LocalDateTime.of(2024, 2, 1, 10, 11), Duration.ofMinutes(15), epic1.getId());
+        fileBackedTasksManager.createSubtask(subtask1);
+        Subtask subtask2 = new Subtask("SUBTASK-2", "SUBTASK-2-DESCRIPTION",
+                LocalDateTime.of(2024, 2, 2, 10, 32), Duration.ofMinutes(30), epic2.getId());
+        fileBackedTasksManager.createSubtask(subtask2);
+        Subtask subtask3 = new Subtask("SUBTASK-3", "SUBTASK-3-DESCRIPTION",
+                LocalDateTime.of(2024, 2, 3, 10, 44), Duration.ofMinutes(45), epic2.getId());
+        fileBackedTasksManager.createSubtask(subtask3);
+
+        fileBackedTasksManager.getOneEpic(epic2.getId());
+        fileBackedTasksManager.getOneTask(task3.getId());
+        fileBackedTasksManager.getOneSubtask(subtask1.getId());
+        fileBackedTasksManager.getOneTask(task1.getId());
+        FileBackedTasksManager taskManagerLoadFromFile = FileBackedTasksManager.loadFromFile(file);
+
+        assertEquals(fileBackedTasksManager.getAllTasks().toString(), taskManagerLoadFromFile.getAllTasks().toString(),
+                "Задачи из файла записываются в базу неверно.");
+        assertEquals(fileBackedTasksManager.getAllSubtasks().toString(), taskManagerLoadFromFile.getAllSubtasks().toString(),
+                "Подзадачи из файла записываются в базу неверно.");
+        assertEquals(fileBackedTasksManager.getAllEpics().toString(), taskManagerLoadFromFile.getAllEpics().toString(),
+                "Эпики из файла записываются в базу неверно.");
+        assertEquals(fileBackedTasksManager.getHistory().toString(), taskManagerLoadFromFile.getHistory().toString(),
+                "История из файла записывается в базу неверно.");
     }
 
     private List<String> readeFile() {

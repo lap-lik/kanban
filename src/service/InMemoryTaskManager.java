@@ -189,11 +189,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Map<LocalDateTime, Boolean> getIntervalGrid() {
-        return new HashMap<>(dataPlanner.getIntervalGrid());
-    }
-
-    @Override
     public void deleteAllTasks() {
         tasks.keySet().forEach(taskId -> {
             historyManager.remove(taskId);
@@ -221,7 +216,10 @@ public class InMemoryTaskManager implements TaskManager {
         if (!epics.isEmpty()) {
             epics.values().forEach(value -> {
                 value.setStatus(Status.NEW);
-                value.setSubtasksIds(new ArrayList<>());
+                value.getSubtasksIds().clear();
+                value.setStatus(null);
+                value.setDuration(null);
+                value.setEndTime(null);
             });
         }
     }
@@ -264,6 +262,10 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    public Map<LocalDateTime, Boolean> getIntervalGrid() {
+        return new HashMap<>(dataPlanner.getIntervalGrid());
+    }
+
     protected Status checkStatus(Epic epic) {
         List<Status> statuses = epic.getSubtasksIds().stream()
                 .map(e -> subtasks.get(e).getStatus())
@@ -286,29 +288,32 @@ public class InMemoryTaskManager implements TaskManager {
         List<Subtask> subtasksByEpic = epic.getSubtasksIds().stream()
                 .map(subtasks::get)
                 .collect(Collectors.toList());
-
-        LocalDateTime epicStartTime = subtasksByEpic.stream()
-                .map(Subtask::getStartTime)
-                .filter(Objects::nonNull)
-                .min(LocalDateTime::compareTo)
-                .orElse(null);
-
-        LocalDateTime epicEndTime = subtasksByEpic.stream()
-                .map(Subtask::getEndTime)
-                .filter(Objects::nonNull)
-                .max(LocalDateTime::compareTo)
-                .orElse(null);
-
-        Duration epicDuration = subtasksByEpic.stream()
-                .map(Subtask::getDuration)
-                .filter(Objects::nonNull)
-                .reduce(Duration::plus)
-                .orElse(null);
-
+        LocalDateTime epicStartTime = null;
+        LocalDateTime epicEndTime = null;
+        Duration epicDuration = null;
+        for (Subtask subtask : subtasksByEpic) {
+            LocalDateTime startTime = subtask.getStartTime();
+            LocalDateTime endTime = subtask.getEndTime();
+            Duration duration = subtask.getDuration();
+            if (startTime != null && (epicStartTime == null || startTime.isBefore(epicStartTime))) {
+                epicStartTime = startTime;
+            }
+            if (endTime != null && (epicEndTime == null || endTime.isAfter(epicEndTime))) {
+                epicEndTime = endTime;
+            }
+            if (duration != null) {
+                if (epicDuration == null) {
+                    epicDuration = duration;
+                } else {
+                    epicDuration = epicDuration.plus(duration);
+                }
+            }
+        }
         epic.setStartTime(epicStartTime);
         epic.setEndTime(epicEndTime);
         epic.setDuration(epicDuration);
     }
+
     protected Integer createId() {
         return ++id;
     }

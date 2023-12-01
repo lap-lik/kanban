@@ -111,10 +111,17 @@ public class Task {
         return localDateTime.format(LOCAL_DATA_TIME_FORMAT);
     }
 
+    protected String durationToString(Duration duration){
+        if (duration == null){
+            return "null";
+        }
+        return String.valueOf(duration.toMinutes());
+    }
+
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,%s,%d,\n", id, Type.TASK, name, status, description,
-                localDateTimeToString(startTime), duration.toMinutes());
+        return String.format("%d,%s,%s,%s,%s,%s,%s,\n", id, Type.TASK, name, status, description,
+                localDateTimeToString(startTime), durationToString(duration));
     }
 
     @Override

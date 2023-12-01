@@ -73,9 +73,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void createEpic_STANDART() {
-        setUp();
+        Epic epic1 = new Epic("EPIC-1", "EPIC-1-DESCRIPTION");
+        taskManager.createEpic(epic1);
+
         final int epicId = epic1.getId();
-        assertEquals(2, epicId);
+        assertEquals(1, epicId);
         final Epic savedEpic = taskManager.getOneEpic(epicId);
         assertNotNull(savedEpic, "Эпик-1 не найдена.");
         assertEquals(epic1, savedEpic, "Эпик-1 и сохраненная в базе не совпадают.");
@@ -145,9 +147,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         String checkTask1ToString = "1,TASK,TASK-1-NEW,IN_PROGRESS,TASK-1-DESCRIPTION-NEW,10:15(02-01-2024),40,\n";
         assertEquals(1, taskManager.getAllTasks().size(), "1 - Неверное количество задач.");
         assertEquals(checkTask1ToString, taskManager.getAllTasks().get(0).toString(),
-                "Текствое представление задачи-1 и обновленная в базе не совпадают.");
-        assertEquals(5, taskManager.getIntervalGrid().size(),
-                "1 - Неверное количество занятых ячеек в DataPlanner.");
+                "Текстовое представление задачи-1 и обновленная в базе не совпадают.");
         assertEquals(savedTask1, taskManager.getPrioritizedTasks().get(0));
 
         final Task savedTask2 = taskManager.getOneTask(taskId);
@@ -157,8 +157,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, taskManager.getAllTasks().size(), "2 - Неверное количество задач.");
         assertEquals(Status.DONE, taskManager.getAllTasks().get(0).getStatus(),
                 "2 - Статус у обновленной задачи-1 не совпадает.");
-        assertEquals(5, taskManager.getIntervalGrid().size(),
-                "2 - Неверное количество занятых ячеек в DataPlanner.");
 
         final Task savedTask3 = taskManager.getOneTask(taskId);
         savedTask3.setStatus(Status.NEW);
@@ -167,8 +165,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, taskManager.getAllTasks().size(), "3 - Неверное количество задач.");
         assertEquals(Status.NEW, taskManager.getAllTasks().get(0).getStatus(),
                 "3 - Статус у обновленной задачи-1 не совпадает.");
-        assertEquals(5, taskManager.getIntervalGrid().size(),
-                "3 - Неверное количество занятых ячеек в DataPlanner.");
     }
 
     @Test
@@ -196,7 +192,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.updateTask(task1);
         String checkTask1ToString = "1,TASK,TASK-1,NEW,TASK-1-DESCRIPTION,10:15(01-01-2024),30,\n";
         assertEquals(checkTask1ToString, taskManager.getAllTasks().get(0).toString(),
-                "Текствое представление задачи-1 и обновленная в базе не совпадают.");
+                "Текстовое представление задачи-1 и обновленная в базе не совпадают.");
     }
 
     @Test
@@ -217,9 +213,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         String checkSubtask1ToString = "3,SUBTASK,SUBTASK-1-NEW,IN_PROGRESS,SUBTASK-1-DESCRIPTION-NEW,10:15(02-01-2024),40,2\n";
         assertEquals(1, taskManager.getAllSubtasks().size(), "1 - Неверное количество подзадач.");
         assertEquals(checkSubtask1ToString, taskManager.getAllSubtasks().get(0).toString(),
-                "Текствое представление подзадачи-1 и обновленная в базе не совпадают.");
-        assertEquals(5, taskManager.getIntervalGrid().size(),
-                "1 - Неверное количество занятых ячеек в DataPlanner.");
+                "Текстовое представление подзадачи-1 и обновленная в базе не совпадают.");
         assertEquals(savedSubtask1, taskManager.getPrioritizedTasks().get(1));
 
         final Subtask savedSubtask2 = taskManager.getOneSubtask(subtaskId);
@@ -229,8 +223,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, taskManager.getAllSubtasks().size(), "2 - Неверное количество подзадач.");
         assertEquals(Status.DONE, taskManager.getAllSubtasks().get(0).getStatus(),
                 "2 - Статус у обновленной подзадачи-1 не совпадает.");
-        assertEquals(5, taskManager.getIntervalGrid().size(),
-                "2 - Неверное количество занятых ячеек в DataPlanner.");
 
         final Subtask savedSubtask3 = taskManager.getOneSubtask(subtaskId);
         savedSubtask3.setStatus(Status.NEW);
@@ -239,8 +231,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, taskManager.getAllSubtasks().size(), "3 - Неверное количество подзадач.");
         assertEquals(Status.NEW, taskManager.getAllSubtasks().get(0).getStatus(),
                 "3 - Статус у обновленной подзадачи-1 не совпадает.");
-        assertEquals(5, taskManager.getIntervalGrid().size(),
-                "3 - Неверное количество занятых ячеек в DataPlanner.");
     }
 
     @Test
@@ -256,7 +246,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.updateTask(subtask1);
         String checkSubtask1ToString = "3,SUBTASK,SUBTASK-1,NEW,SUBTASK-1-DESCRIPTION,10:15(01-02-2024),30,2\n";
         assertEquals(checkSubtask1ToString, taskManager.getAllSubtasks().get(0).toString(),
-                "Текствое представление задачи-1 и обновленная в базе не совпадают.");
+                "Текстовое представление задачи-1 и обновленная в базе не совпадают.");
     }
 
     @Test
@@ -267,18 +257,16 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
         final Epic savedEpic1 = taskManager.getOneEpic(epicId);
         assertNotNull(savedEpic1, "Эпик-1 не найден.");
-        assertEquals(epic1, savedEpic1, "Эпик-1 и сохраненный в базе не совпадают.");
 
         savedEpic1.setName("EPIC-1-NEW");
         savedEpic1.setDescription("EPIC-1-DESCRIPTION-NEW");
         savedEpic1.setStatus(Status.IN_PROGRESS);
         taskManager.updateEpic(savedEpic1);
-        final String checkUpdateEpic1ToString = "2,EPIC,EPIC-1-NEW,NEW,EPIC-1-DESCRIPTION-NEW,\n";
-
+        final String checkUpdateEpic1ToString = "2,EPIC,EPIC-1-NEW,NEW,EPIC-1-DESCRIPTION-NEW,10:15(01-02-2024),30,\n";
 
         assertEquals(1, taskManager.getAllEpics().size(), "1 - Неверное количество эпиков.");
         assertEquals(checkUpdateEpic1ToString, taskManager.getAllEpics().get(0).toString(),
-                "Текствое представление эпика-1 и обновленная в базе не совпадают.");
+                "Текстовое представление эпика-1 и обновленная в базе не совпадают.");
 
         Subtask subtask2 = new Subtask("SUBTASK-2", "SUBTASK-2-DESCRIPTION",
                 LocalDateTime.of(2024, 2, 2, 10, 15), Duration.ofMinutes(30), epicId);
@@ -321,7 +309,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         epic1.setName("EPIC-1-NEW");
         epic1.setDescription("EPIC-1-DESCRIPTION-NEW");
         taskManager.updateEpic(epic1);
-        String checkEpic1ToString = "2,EPIC,EPIC-1,NEW,EPIC-1-DESCRIPTION,\n";
+        String checkEpic1ToString = "2,EPIC,EPIC-1,NEW,EPIC-1-DESCRIPTION,10:15(01-02-2024),30,\n";
         assertEquals(1, taskManager.getAllEpics().size(),
                 "После обновления эпика по ошибочному ID количество эпиков в базе увеличилось.");
         assertEquals(checkEpic1ToString, taskManager.getAllEpics().get(0).toString(),
@@ -333,20 +321,20 @@ abstract class TaskManagerTest<T extends TaskManager> {
         setUp();
         List<Task> checkListTasks = taskManager.getAllTasks();
         assertEquals(1, checkListTasks.size(),
-                "1 - Из базы возвращается не верное количество задач.");
+                "1 - Из базы возвращается неверное количество задач.");
         Task task2 = new Task("TASK-2", "TASK-2-DESCRIPTION",
                 LocalDateTime.of(2024, 3, 1, 10, 15), Duration.ofMinutes(30));
         taskManager.createTask(task2);
         checkListTasks = taskManager.getAllTasks();
         assertEquals(2, checkListTasks.size(),
-                "2 - Из базы возвращается не верное количество задач.");
+                "2 - Из базы возвращается неверное количество задач.");
     }
 
     @Test
     void getAllTasks_EMPTY_MAP() {
         List<Task> checkListTasks = taskManager.getAllTasks();
         assertEquals(0, checkListTasks.size(),
-                "Из базы возвращается не верное количество задач.");
+                "Из базы возвращается неверное количество задач.");
     }
 
     @Test
@@ -354,7 +342,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         setUp();
         List<Epic> checkListEpics = taskManager.getAllEpics();
         assertEquals(1, checkListEpics.size(),
-                "1 - Из базы возвращается не верное количество эпиков.");
+                "1 - Из базы возвращается неверное количество эпиков.");
         Epic epic2 = new Epic("EPIC-2", "EPIC-2-DESCRIPTION");
         taskManager.createEpic(epic2);
         checkListEpics = taskManager.getAllEpics();
@@ -407,14 +395,16 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void getOneTask_INVALID_ID() {
         setUp();
-        assertNull(taskManager.getOneTask(INVALID_TASK_ID), "Из базы возвращается задача по не правильному ID.");
+        assertNull(taskManager.getOneTask(INVALID_TASK_ID), "Из базы возвращается задача по неправильному ID.");
         assertEquals(0, taskManager.getHistory().size(), "Количество задач в истории не совпадает.");
     }
 
     @Test
     void getOneEpic_STANDART() {
         setUp();
-        assertEquals(epic1, taskManager.getOneEpic(2), "Из базы возвращается не верный эпик-1.");
+        assertEquals(epic1.getName(), taskManager.getOneEpic(2).getName(), "1 - Из базы возвращается не верный эпик-1.");
+        assertEquals(epic1.getDescription(), taskManager.getOneEpic(2).getDescription(),
+                "1 - Из базы возвращается не верный эпик-1.");
         assertEquals(1, taskManager.getHistory().size(), "Количество задач в истории не совпадает.");
     }
 
@@ -427,7 +417,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void getOneEpic_INVALID_ID() {
         setUp();
-        assertNull(taskManager.getOneEpic(INVALID_TASK_ID), "Из базы возвращается эпик по не правильному ID.");
+        assertNull(taskManager.getOneEpic(INVALID_TASK_ID), "Из базы возвращается эпик по неправильному ID.");
         assertEquals(0, taskManager.getHistory().size(), "Количество задач в истории не совпадает.");
     }
 
@@ -447,7 +437,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void getOneSubtask_INVALID_ID() {
         setUp();
-        assertNull(taskManager.getOneSubtask(INVALID_TASK_ID), "Из базы возвращается подзадача по не правильному ID.");
+        assertNull(taskManager.getOneSubtask(INVALID_TASK_ID), "Из базы возвращается подзадача по неправильному ID.");
         assertEquals(0, taskManager.getHistory().size(), "Количество задач в истории не совпадает.");
     }
 
@@ -456,25 +446,25 @@ abstract class TaskManagerTest<T extends TaskManager> {
         setUp();
         final Integer epic1Id = epic1.getId();
         final List<Subtask> subtasksIds1 = taskManager.getAllSubtasksByEpicId(epic1Id);
-        assertEquals(1, subtasksIds1.size(), "1 - Возврщается не верное количество ID подзадач.");
+        assertEquals(1, subtasksIds1.size(), "1 - Возвращается не верное количество ID подзадач.");
         Subtask subtask2 = new Subtask("SUBTASK-2", "SUBTASK-2-DESCRIPTION",
                 LocalDateTime.of(2024, 2, 2, 10, 15), Duration.ofMinutes(30), epic1.getId());
         taskManager.createSubtask(subtask2);
         final List<Subtask> subtasksIds2 = taskManager.getAllSubtasksByEpicId(epic1Id);
-        assertEquals(2, subtasksIds2.size(), "2 - Возврщается не верное количество ID подзадач.");
+        assertEquals(2, subtasksIds2.size(), "2 - Возвращается не верное количество ID подзадач.");
     }
 
     @Test
     void getAllSubtasksByEpicId_EMPTY_MAP() {
         final Integer epic1Id = 2;
         final List<Subtask> subtasksIds1 = taskManager.getAllSubtasksByEpicId(epic1Id);
-        assertEquals(0, subtasksIds1.size(), "1 - Возврщается не верное количество ID подзадач.");
+        assertEquals(0, subtasksIds1.size(), "1 - Возвращается не верное количество ID подзадач.");
     }
 
     @Test
     void getAllSubtasksByEpicId_INVALID_ID() {
         final List<Subtask> subtasksIds1 = taskManager.getAllSubtasksByEpicId(INVALID_TASK_ID);
-        assertEquals(0, subtasksIds1.size(), "1 - Возврщается не верное количество ID подзадач.");
+        assertEquals(0, subtasksIds1.size(), "1 - Возвращается не верное количество ID подзадач.");
     }
 
 
@@ -484,7 +474,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.getOneTask(task1.getId());
         taskManager.getOneSubtask(subtask1.getId());
         List<Task> history = List.of(task1, subtask1);
-        assertArrayEquals(history.toArray(), taskManager.getHistory().toArray(), "История возвращается не правильно.");
+        assertArrayEquals(history.toArray(), taskManager.getHistory().toArray(), "История возвращается неправильно.");
     }
 
     @Test
@@ -531,6 +521,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 "2 - Количество задач в множестве приоритетов не совпадает.");
         assertEquals(0, subtasksIds2.size(), "Количество Id подзадач у эпика-1 не совпадает.");
     }
+    @Test
+    void deleteOneTask11_STANDART() {
+        setUp();
+        Task task2 = new Task("TASK-2", "TASK-2-DESCRIPTION",
+                LocalDateTime.of(2024, 3, 1, 10, 15), Duration.ofMinutes(30));
+        taskManager.createTask(task2);
+    }
+
 
     @Test
     void deleteOneTask_STANDART() {

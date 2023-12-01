@@ -38,7 +38,7 @@ class InMemoryHistoryManagerTest {
     @Test
     void getHistory() {
         List<Task> listTask = historyManager.getHistory();
-        assertEquals(3, listTask.size(), "История возвращается не верно.");
+        assertEquals(3, listTask.size(), "История возвращается неправильно.");
     }
 
     @Test
@@ -46,15 +46,15 @@ class InMemoryHistoryManagerTest {
         historyManager.add(task1);
         List<Task> listTask = historyManager.getHistory();
         assertEquals(3, listTask.size());
-        assertEquals(task1, listTask.get(2), "В историю добавляется не верно.");
+        assertEquals(task1, listTask.get(2), "В историю добавляется неправильно.");
     }
 
     @Test
     void remove() {
         List<Task> listTasks = historyManager.getHistory();
-        assertEquals(3, listTasks.size(), "История возвращается не верно.");
+        assertEquals(3, listTasks.size(), "История возвращается неправильно.");
         historyManager.remove(1);
         List<Task> listTask = historyManager.getHistory();
-        assertEquals(2, listTask.size(), "Из истории удаляется не верно.");
+        assertEquals(2, listTask.size(), "Из истории удаляется неправильно.");
     }
 }

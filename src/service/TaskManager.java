@@ -41,8 +41,6 @@ public interface TaskManager {
 
     List<Task> getPrioritizedTasks();
 
-    Map<LocalDateTime, Boolean> getIntervalGrid();
-
     void deleteAllTasks();
 
     void deleteAllEpics();

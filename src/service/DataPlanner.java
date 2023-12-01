@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static constants.Constants.INTERVAL_MINUTES;
 import static constants.Constants.LOCAL_DATA_TIME_FORMAT;
 
 public class DataPlanner {
@@ -34,7 +35,7 @@ public class DataPlanner {
             startTime = startTime.withMinute(minutes);
         }
         int duration = checkMinutes((int) task.getDuration().toMinutes());
-        duration = duration == 0 ? 15 : duration;
+        duration = duration == 0 ? INTERVAL_MINUTES : duration;
         LocalDateTime endTime = startTime.plus(Duration.ofMinutes(duration));
 
         try {
@@ -42,7 +43,7 @@ public class DataPlanner {
             isCellsFree(startTime, endTime);
             while (startTime.isBefore(endTime)) {
                 intervalGrid.put(startTime, false);
-                startTime = startTime.plusMinutes(15);
+                startTime = startTime.plusMinutes(INTERVAL_MINUTES);
             }
         } catch (DataPlannerException e) {
             System.err.println("Ошибка: " + task.getName() + " - " + e.getMessage());
@@ -56,21 +57,25 @@ public class DataPlanner {
         int minutes = checkMinutes(startTime.getMinute());
         startTime = startTime.withMinute(minutes);
         int duration = checkMinutes((int) task.getDuration().toMinutes());
-        duration = duration == 0 ? 15 : duration;
+        duration = duration == 0 ? INTERVAL_MINUTES : duration;
         LocalDateTime endTime = startTime.plus(Duration.ofMinutes(duration));
 
         while (startTime.isBefore(endTime)) {
             intervalGrid.remove(startTime);
-            startTime = startTime.plusMinutes(15);
+            startTime = startTime.plusMinutes(INTERVAL_MINUTES);
         }
     }
 
     private Integer checkMinutes(Integer minutes) {
-        int newMinutes = minutes;
-        if (minutes % 15 != 0) {
-            newMinutes = (minutes + 7) / 15 * 15;
+        int quotient = minutes / INTERVAL_MINUTES;
+        int remainder = minutes % INTERVAL_MINUTES;
+        int roundedMinutes;
+        if (remainder <= (INTERVAL_MINUTES / 2)) {
+            roundedMinutes = quotient * INTERVAL_MINUTES;
+        } else {
+            roundedMinutes = (quotient + 1) * INTERVAL_MINUTES;
         }
-        return newMinutes;
+        return roundedMinutes;
     }
 
     private void isWithinNextYear(LocalDateTime startTime, LocalDateTime endTime) {
@@ -85,7 +90,7 @@ public class DataPlanner {
                 throw new DataPlannerException("Задача не добавлена, время " +
                         startTime.format(LOCAL_DATA_TIME_FORMAT) + " занято.");
             }
-            startTime = startTime.plusMinutes(15);
+            startTime = startTime.plusMinutes(INTERVAL_MINUTES);
         }
     }
 
