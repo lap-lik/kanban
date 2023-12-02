@@ -35,7 +35,6 @@ public class DataPlanner {
             startTime = startTime.withMinute(minutes);
         }
         int duration = checkMinutes((int) task.getDuration().toMinutes());
-        duration = duration == 0 ? INTERVAL_MINUTES : duration;
         LocalDateTime endTime = startTime.plus(Duration.ofMinutes(duration));
 
         try {
@@ -57,7 +56,6 @@ public class DataPlanner {
         int minutes = checkMinutes(startTime.getMinute());
         startTime = startTime.withMinute(minutes);
         int duration = checkMinutes((int) task.getDuration().toMinutes());
-        duration = duration == 0 ? INTERVAL_MINUTES : duration;
         LocalDateTime endTime = startTime.plus(Duration.ofMinutes(duration));
 
         while (startTime.isBefore(endTime)) {
@@ -67,15 +65,11 @@ public class DataPlanner {
     }
 
     private Integer checkMinutes(Integer minutes) {
-        int quotient = minutes / INTERVAL_MINUTES;
-        int remainder = minutes % INTERVAL_MINUTES;
-        int roundedMinutes;
-        if (remainder <= (INTERVAL_MINUTES / 2)) {
-            roundedMinutes = quotient * INTERVAL_MINUTES;
-        } else {
-            roundedMinutes = (quotient + 1) * INTERVAL_MINUTES;
+        int div = minutes % INTERVAL_MINUTES;
+        if (div != 0) {
+            div = INTERVAL_MINUTES - div;
         }
-        return roundedMinutes;
+        return minutes + div;
     }
 
     private void isWithinNextYear(LocalDateTime startTime, LocalDateTime endTime) {

@@ -211,13 +211,13 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTasksMa
         fileBackedTasksManager.getOneTask(task1.getId());
         FileBackedTasksManager taskManagerLoadFromFile = FileBackedTasksManager.loadFromFile(file);
 
-        assertEquals(fileBackedTasksManager.getAllTasks().toString(), taskManagerLoadFromFile.getAllTasks().toString(),
+        assertEquals(fileBackedTasksManager.getAllTasks(), taskManagerLoadFromFile.getAllTasks(),
                 "Задачи из файла записываются в базу неверно.");
-        assertEquals(fileBackedTasksManager.getAllSubtasks().toString(), taskManagerLoadFromFile.getAllSubtasks().toString(),
+        assertEquals(fileBackedTasksManager.getAllSubtasks(), taskManagerLoadFromFile.getAllSubtasks(),
                 "Подзадачи из файла записываются в базу неверно.");
-        assertEquals(fileBackedTasksManager.getAllEpics().toString(), taskManagerLoadFromFile.getAllEpics().toString(),
+        assertEquals(fileBackedTasksManager.getAllEpics(), taskManagerLoadFromFile.getAllEpics(),
                 "Эпики из файла записываются в базу неверно.");
-        assertEquals(fileBackedTasksManager.getHistory().toString(), taskManagerLoadFromFile.getHistory().toString(),
+        assertEquals(fileBackedTasksManager.getHistory(), taskManagerLoadFromFile.getHistory(),
                 "История из файла записывается в базу неверно.");
     }
 

@@ -40,8 +40,16 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,%s,%s,\n", id, Type.EPIC, name, status, description,
-                localDateTimeToString(startTime), durationToString(duration));
+        return "Epic{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
+                ", endTime=" + endTime +
+                ", subtasksIds=" + subtasksIds +
+                '}';
     }
 
     @Override
@@ -50,11 +58,11 @@ public class Epic extends Task {
         if (!(object instanceof Epic)) return false;
         if (!super.equals(object)) return false;
         Epic epic = (Epic) object;
-        return Objects.equals(subtasksIds, epic.subtasksIds);
+        return Objects.equals(subtasksIds, epic.subtasksIds) && Objects.equals(endTime, epic.endTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), subtasksIds);
+        return Objects.hash(super.hashCode(), subtasksIds, endTime);
     }
 }

@@ -38,8 +38,15 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,%s,%s,%d\n", id, Type.SUBTASK, name, status, description,
-                localDateTimeToString(startTime), durationToString(duration), epicId);
+        return "Subtask{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
+                ", epicId=" + epicId +
+                '}';
     }
 
     @Override
@@ -55,19 +62,4 @@ public class Subtask extends Task {
     public int hashCode() {
         return Objects.hash(super.hashCode(), epicId);
     }
-
-//    @Override
-//    public boolean equals(Object object) {
-//        if (this == object) return true;
-//        if (!(object instanceof Subtask)) return false;
-//        Subtask subtask = (Subtask) object;
-//        return duration == subtask.duration && Objects.equals(id, subtask.id) &&
-//                Objects.equals(name, subtask.name) && Objects.equals(description, subtask.description) &&
-//                status == subtask.status && Objects.equals(startTime, subtask.startTime) &&
-//                Objects.equals(epicId, subtask.epicId);
-//    }
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(id, name, description, status, startTime, duration, epicId);
-//    }
 }

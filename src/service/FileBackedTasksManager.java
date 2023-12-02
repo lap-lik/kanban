@@ -41,6 +41,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         fileBackedTasksManager.putTaskToMap(line);
                     }
                 }
+                fileBackedTasksManager.epics.values().forEach(fileBackedTasksManager::updateEpicDateTime);
             } catch (IOException exception) {
                 throw new ManagerSaveException("Файл " + file.getName() + " не считался!", exception);
             }
@@ -198,8 +199,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     prioritizedManager.add(subtask);
                     Epic epic1 = epics.get(subtask.getEpicId());
                     epic1.getSubtasksIds().add(subtask.getId());
-                    epic1.setStatus(checkStatus(epic1));
-                    updateEpicDateTime(epic1);
                 }
                 break;
         }
@@ -236,24 +235,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private LocalDateTime dataTimeFromString(String line) {
-        if (line.equals("null")) {
-            return null;
-        }
-        return LocalDateTime.parse(line, LOCAL_DATA_TIME_FORMAT);
-    }
-
     private void save() {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
             bufferedWriter.write(COLUMNS + "\n");
             for (Task task : tasks.values()) {
-                bufferedWriter.write(task.toString());
+                bufferedWriter.write(toCsv(task));
             }
             for (Epic epic : epics.values()) {
-                bufferedWriter.write(epic.toString());
+                bufferedWriter.write(toCsv(epic));
             }
             for (Subtask subtask : subtasks.values()) {
-                bufferedWriter.write(subtask.toString());
+                bufferedWriter.write(toCsv(subtask));
             }
             String history = historyToString(historyManager);
             if (!history.isEmpty()) {
@@ -264,5 +256,41 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (IOException exception) {
             throw new ManagerSaveException("Не удалось сохранить в файл " + file.getName(), exception);
         }
+    }
+
+    private String toCsv(Task task) {
+        return String.format("%d,%s,%s,%s,%s,%s,%s,\n", task.getId(), Type.TASK, task.getName(), task.getStatus(), task.getDescription(),
+                localDateTimeToString(task.getStartTime()), durationToString(task.getDuration()));
+    }
+
+    private String toCsv(Epic task) {
+        return String.format("%d,%s,%s,%s,%s,%s,%s,\n", task.getId(), Type.EPIC, task.getName(), task.getStatus(), task.getDescription(),
+                localDateTimeToString(task.getStartTime()), durationToString(task.getDuration()));
+    }
+
+    private String toCsv(Subtask task) {
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%d\n", task.getId(), Type.SUBTASK, task.getName(), task.getStatus(), task.getDescription(),
+                localDateTimeToString(task.getStartTime()), durationToString(task.getDuration()), task.getEpicId());
+    }
+
+    private LocalDateTime dataTimeFromString(String line) {
+        if (line.equals("null")) {
+            return null;
+        }
+        return LocalDateTime.parse(line, LOCAL_DATA_TIME_FORMAT);
+    }
+
+    private String localDateTimeToString(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        }
+        return localDateTime.format(LOCAL_DATA_TIME_FORMAT);
+    }
+
+    private String durationToString(Duration duration) {
+        if (duration == null) {
+            return "null";
+        }
+        return String.valueOf(duration.toMinutes());
     }
 }

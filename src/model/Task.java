@@ -104,24 +104,16 @@ public class Task {
         this.startTime = startTime;
     }
 
-    protected String localDateTimeToString(LocalDateTime localDateTime) {
-        if (localDateTime == null) {
-            return null;
-        }
-        return localDateTime.format(LOCAL_DATA_TIME_FORMAT);
-    }
-
-    protected String durationToString(Duration duration){
-        if (duration == null){
-            return "null";
-        }
-        return String.valueOf(duration.toMinutes());
-    }
-
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,%s,%s,\n", id, Type.TASK, name, status, description,
-                localDateTimeToString(startTime), durationToString(duration));
+        return "Task{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", startTime=" + startTime +
+                ", duration=" + duration +
+                '}';
     }
 
     @Override
@@ -129,7 +121,7 @@ public class Task {
         if (this == object) return true;
         if (!(object instanceof Task)) return false;
         Task task = (Task) object;
-        return duration == task.duration && Objects.equals(id, task.id) &&
+        return Objects.equals(duration, task.duration) && Objects.equals(id, task.id) &&
                 Objects.equals(name, task.name) && Objects.equals(description, task.description) &&
                 status == task.status && Objects.equals(startTime, task.startTime);
     }

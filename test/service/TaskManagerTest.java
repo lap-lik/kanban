@@ -144,7 +144,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         savedTask1.setStartTime(LocalDateTime.of(2024, 1, 2, 10, 15));
         savedTask1.setDuration(Duration.ofMinutes(40));
         taskManager.updateTask(savedTask1);
-        String checkTask1ToString = "1,TASK,TASK-1-NEW,IN_PROGRESS,TASK-1-DESCRIPTION-NEW,10:15(02-01-2024),40,\n";
+        String checkTask1ToString = "Task{id=1, name='TASK-1-NEW', description='TASK-1-DESCRIPTION-NEW', " +
+                "status=IN_PROGRESS, startTime=2024-01-02T10:15, duration=PT40M}";
         assertEquals(1, taskManager.getAllTasks().size(), "1 - Неверное количество задач.");
         assertEquals(checkTask1ToString, taskManager.getAllTasks().get(0).toString(),
                 "Текстовое представление задачи-1 и обновленная в базе не совпадают.");
@@ -190,7 +191,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         task1.setStartTime(LocalDateTime.of(2024, 1, 2, 10, 15));
         task1.setDuration(Duration.ofMinutes(40));
         taskManager.updateTask(task1);
-        String checkTask1ToString = "1,TASK,TASK-1,NEW,TASK-1-DESCRIPTION,10:15(01-01-2024),30,\n";
+        String checkTask1ToString = "Task{id=1, name='TASK-1', description='TASK-1-DESCRIPTION', status=NEW, startTime=2024-01-01T10:15, duration=PT30M}";
         assertEquals(checkTask1ToString, taskManager.getAllTasks().get(0).toString(),
                 "Текстовое представление задачи-1 и обновленная в базе не совпадают.");
     }
@@ -210,7 +211,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         savedSubtask1.setStartTime(LocalDateTime.of(2024, 1, 2, 10, 15));
         savedSubtask1.setDuration(Duration.ofMinutes(40));
         taskManager.updateSubtask(savedSubtask1);
-        String checkSubtask1ToString = "3,SUBTASK,SUBTASK-1-NEW,IN_PROGRESS,SUBTASK-1-DESCRIPTION-NEW,10:15(02-01-2024),40,2\n";
+        String checkSubtask1ToString = "Subtask{id=3, name='SUBTASK-1-NEW', description='SUBTASK-1-DESCRIPTION-NEW', " +
+                "status=IN_PROGRESS, startTime=2024-01-02T10:15, duration=PT40M, epicId=2}";
         assertEquals(1, taskManager.getAllSubtasks().size(), "1 - Неверное количество подзадач.");
         assertEquals(checkSubtask1ToString, taskManager.getAllSubtasks().get(0).toString(),
                 "Текстовое представление подзадачи-1 и обновленная в базе не совпадают.");
@@ -244,7 +246,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
         subtask1.setStartTime(LocalDateTime.of(2024, 1, 2, 10, 15));
         subtask1.setDuration(Duration.ofMinutes(40));
         taskManager.updateTask(subtask1);
-        String checkSubtask1ToString = "3,SUBTASK,SUBTASK-1,NEW,SUBTASK-1-DESCRIPTION,10:15(01-02-2024),30,2\n";
+        String checkSubtask1ToString = "Subtask{id=3, name='SUBTASK-1', description='SUBTASK-1-DESCRIPTION', " +
+                "status=NEW, startTime=2024-02-01T10:15, duration=PT30M, epicId=2}";
+
         assertEquals(checkSubtask1ToString, taskManager.getAllSubtasks().get(0).toString(),
                 "Текстовое представление задачи-1 и обновленная в базе не совпадают.");
     }
@@ -262,7 +266,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         savedEpic1.setDescription("EPIC-1-DESCRIPTION-NEW");
         savedEpic1.setStatus(Status.IN_PROGRESS);
         taskManager.updateEpic(savedEpic1);
-        final String checkUpdateEpic1ToString = "2,EPIC,EPIC-1-NEW,NEW,EPIC-1-DESCRIPTION-NEW,10:15(01-02-2024),30,\n";
+        final String checkUpdateEpic1ToString = "Epic{id=2, name='EPIC-1-NEW', description='EPIC-1-DESCRIPTION-NEW', " +
+                "status=NEW, startTime=2024-02-01T10:15, duration=PT30M, endTime=2024-02-01T10:45, subtasksIds=[3]}";
 
         assertEquals(1, taskManager.getAllEpics().size(), "1 - Неверное количество эпиков.");
         assertEquals(checkUpdateEpic1ToString, taskManager.getAllEpics().get(0).toString(),
@@ -309,7 +314,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
         epic1.setName("EPIC-1-NEW");
         epic1.setDescription("EPIC-1-DESCRIPTION-NEW");
         taskManager.updateEpic(epic1);
-        String checkEpic1ToString = "2,EPIC,EPIC-1,NEW,EPIC-1-DESCRIPTION,10:15(01-02-2024),30,\n";
+        String checkEpic1ToString = "Epic{id=2, name='EPIC-1', description='EPIC-1-DESCRIPTION', status=NEW, " +
+                "startTime=2024-02-01T10:15, duration=PT30M, endTime=2024-02-01T10:45, subtasksIds=[3]}";
+
         assertEquals(1, taskManager.getAllEpics().size(),
                 "После обновления эпика по ошибочному ID количество эпиков в базе увеличилось.");
         assertEquals(checkEpic1ToString, taskManager.getAllEpics().get(0).toString(),
@@ -521,6 +528,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 "2 - Количество задач в множестве приоритетов не совпадает.");
         assertEquals(0, subtasksIds2.size(), "Количество Id подзадач у эпика-1 не совпадает.");
     }
+
     @Test
     void deleteOneTask11_STANDART() {
         setUp();
