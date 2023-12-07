@@ -22,11 +22,8 @@ public class DataPlanner {
         this.endYear = startYear.plusYears(1);
     }
 
-    public boolean fillCells(Task task) {
+    public void fillCells(Task task) {
         LocalDateTime startTime = task.getStartTime();
-        if (startTime == null) {
-            return true;
-        }
         int minutes = checkMinutes(startTime.getMinute());
         if (minutes == 60) {
             startTime = startTime.plusHours(1);
@@ -46,9 +43,8 @@ public class DataPlanner {
             }
         } catch (DataPlannerException e) {
             System.err.println("Ошибка: " + task.getName() + " - " + e.getMessage());
-            return false;
+            throw new DataPlannerException(e.getMessage());
         }
-        return true;
     }
 
     public void clearCells(Task task) {

@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import exception.TaskManagerException;
 import model.Epic;
 import model.Subtask;
 import model.Task;
@@ -140,17 +141,19 @@ public class HttpTaskServer {
         try {
             Task task = gson.fromJson(value, Task.class);
             if (taskManager.getOneTask(task.getId()) != null) {
-                boolean isUpdate = taskManager.updateTask(task);
-                if (!isUpdate) {
-                    sendText(exchange, "Задача " + task.getName() + " не обновлена.", 405);
+                try {
+                    taskManager.updateTask(task);
+                    sendText(exchange, "Задача = " + task.getName() + " обновлена.", 200);
+                } catch (TaskManagerException e) {
+                    sendText(exchange, e.getMessage(), 405);
                 }
-                sendText(exchange, "Задача = " + task.getName() + " обновлена.", 200);
             } else {
-                boolean isSave = taskManager.createTask(task);
-                if (!isSave) {
-                    sendText(exchange, "Задача " + task.getName() + " не добавлена.", 405);
+                try {
+                    taskManager.createTask(task);
+                    sendText(exchange, "Задача = " + task.getName() + " добавлена.", 201);
+                } catch (TaskManagerException e) {
+                    sendText(exchange, e.getMessage(), 405);
                 }
-                sendText(exchange, "Задача = " + task.getName() + " добавлена.", 201);
             }
         } catch (IOException exception) {
             exception.printStackTrace();
@@ -161,11 +164,19 @@ public class HttpTaskServer {
         try {
             Subtask subtask = gson.fromJson(value, Subtask.class);
             if (taskManager.getOneSubtask(subtask.getId()) != null) {
-                taskManager.updateSubtask(subtask);
-                sendText(exchange, "Подзадача = " + subtask.getName() + " обновлена.", 200);
+                try {
+                    taskManager.updateSubtask(subtask);
+                    sendText(exchange, "Подзадача = " + subtask.getName() + " обновлена.", 200);
+                } catch (TaskManagerException e) {
+                    sendText(exchange, e.getMessage(), 405);
+                }
             } else {
-                taskManager.createSubtask(subtask);
-                sendText(exchange, "Подзадача = " + subtask.getName() + " добавлена.", 201);
+                try {
+                    taskManager.createSubtask(subtask);
+                    sendText(exchange, "Подзадача = " + subtask.getName() + " добавлена.", 201);
+                } catch (TaskManagerException e) {
+                    sendText(exchange, e.getMessage(), 405);
+                }
             }
         } catch (IOException exception) {
             exception.printStackTrace();
@@ -176,11 +187,19 @@ public class HttpTaskServer {
         try {
             Epic epic = gson.fromJson(value, Epic.class);
             if (taskManager.getOneEpic(epic.getId()) != null) {
-                taskManager.updateEpic(epic);
-                sendText(exchange, "Большая задача = " + epic.getName() + " обновлена.", 200);
+                try {
+                    taskManager.updateEpic(epic);
+                    sendText(exchange, "Большая задача = " + epic.getName() + " обновлена.", 200);
+                } catch (TaskManagerException e) {
+                    sendText(exchange, e.getMessage(), 405);
+                }
             } else {
-                taskManager.createEpic(epic);
-                sendText(exchange, "Большая задача = " + epic.getName() + " добавлена.", 201);
+                try {
+                    taskManager.createEpic(epic);
+                    sendText(exchange, "Большая задача = " + epic.getName() + " добавлена.", 201);
+                } catch (TaskManagerException e) {
+                    sendText(exchange, e.getMessage(), 405);
+                }
             }
         } catch (IOException exception) {
             exception.printStackTrace();
@@ -213,25 +232,28 @@ public class HttpTaskServer {
                 if (taskId >= 0) {
                     switch (path) {
                         case "/tasks/task/":
-                            boolean isDeleteTask = taskManager.deleteOneTask(taskId);
-                            if (!isDeleteTask) {
-                                sendText(exchange, "Ошибка запроса.", 405);
+                            try {
+                                taskManager.deleteOneTask(taskId);
+                                sendText(exchange, "Удалена задача с ID = " + taskId, 200);
+                            } catch (TaskManagerException e) {
+                                sendText(exchange, e.getMessage(), 405);
                             }
-                            sendText(exchange, "Удалена задача с ID = " + taskId, 200);
                             break;
                         case "/tasks/subtask/":
-                            boolean isDeleteSubtask = taskManager.deleteOneSubtask(taskId);
-                            if (!isDeleteSubtask) {
-                                sendText(exchange, "Ошибка запроса.", 405);
+                            try {
+                                taskManager.deleteOneSubtask(taskId);
+                                sendText(exchange, "Удалена подзадача с ID = " + taskId, 200);
+                            } catch (TaskManagerException e) {
+                                sendText(exchange, e.getMessage(), 405);
                             }
-                            sendText(exchange, "Удалена подзадача с ID = " + taskId, 200);
                             break;
                         case "/tasks/epic/":
-                            boolean isDeleteEpic = taskManager.deleteOneEpic(taskId);
-                            if (!isDeleteEpic) {
-                                sendText(exchange, "Ошибка запроса.", 405);
+                            try {
+                                taskManager.deleteOneEpic(taskId);
+                                sendText(exchange, "Удалена большая задача с ID = " + taskId, 200);
+                            } catch (TaskManagerException e) {
+                                sendText(exchange, e.getMessage(), 405);
                             }
-                            sendText(exchange, "Удалена большая задача с ID = " + taskId, 200);
                             break;
                         default:
                             sendText(exchange, "Ошибка запроса.", 405);

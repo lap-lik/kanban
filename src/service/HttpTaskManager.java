@@ -35,7 +35,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
             for (Task task : tasksFromServer) {
                 int taskId = task.getId();
                 id = Math.max(id, taskId);
-                dataPlanner.fillCells(task);
+                if (task.getStartTime() != null) {
+                    dataPlanner.fillCells(task);
+                }
                 tasks.put(taskId, task);
                 prioritizedManager.add(task);
             }
@@ -56,7 +58,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
             for (Subtask subtask : subtasksFromServer) {
                 int subtaskId = subtask.getId();
                 id = Math.max(id, subtaskId);
-                dataPlanner.fillCells(subtask);
+                if (subtask.getStartTime() != null) {
+                    dataPlanner.fillCells(subtask);
+                }
                 subtasks.put(subtaskId, subtask);
                 prioritizedManager.add(subtask);
             }

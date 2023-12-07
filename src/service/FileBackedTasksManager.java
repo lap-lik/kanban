@@ -1,5 +1,7 @@
 package service;
 
+import exception.CreateException;
+import exception.DeleteException;
 import exception.ManagerSaveException;
 import model.Epic;
 import model.Status;
@@ -63,57 +65,63 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public boolean createTask(Task task) {
-        if (super.createTask(task)) {
+    public void createTask(Task task) {
+        try {
+            super.createTask(task);
             save();
-            return true;
+        } catch (CreateException e) {
+            throw new CreateException(e.getMessage());
         }
-        return false;
     }
 
     @Override
-    public boolean createEpic(Epic epic) {
-        if (super.createEpic(epic)) {
+    public void createEpic(Epic epic) {
+        try {
+            super.createEpic(epic);
             save();
-            return true;
+        } catch (CreateException e) {
+            throw new CreateException(e.getMessage());
         }
-        return false;
     }
 
     @Override
-    public boolean createSubtask(Subtask subtask) {
-        if (super.createSubtask(subtask)) {
+    public void createSubtask(Subtask subtask) {
+        try {
+            super.createSubtask(subtask);
             save();
-            return true;
+        } catch (CreateException e) {
+            throw new CreateException(e.getMessage());
         }
-        return false;
     }
 
     @Override
-    public boolean updateTask(Task task) {
-        if (super.updateTask(task)) {
+    public void updateTask(Task task) {
+        try {
+            super.updateTask(task);
             save();
-            return true;
+        } catch (CreateException e) {
+            throw new CreateException(e.getMessage());
         }
-        return false;
     }
 
     @Override
-    public boolean updateSubtask(Subtask subtask) {
-        if (super.updateSubtask(subtask)) {
+    public void updateSubtask(Subtask subtask) {
+        try {
+            super.updateSubtask(subtask);
             save();
-            return true;
+        } catch (CreateException e) {
+            throw new CreateException(e.getMessage());
         }
-        return false;
     }
 
     @Override
-    public boolean updateEpic(Epic epic) {
-        if (super.updateEpic(epic)) {
+    public void updateEpic(Epic epic) {
+        try {
+            super.updateEpic(epic);
             save();
-            return true;
+        } catch (CreateException e) {
+            throw new CreateException(e.getMessage());
         }
-        return false;
     }
 
     @Override
@@ -163,31 +171,34 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public boolean deleteOneTask(Integer key) {
-        if (super.deleteOneTask(key)) {
+    public void deleteOneTask(Integer key) {
+        try {
+            super.deleteOneTask(key);
             save();
-            return true;
+        } catch (DeleteException e) {
+            throw new DeleteException(e.getMessage());
         }
-        return false;
     }
 
 
     @Override
-    public boolean deleteOneEpic(Integer key) {
-        if (super.deleteOneEpic(key)) {
+    public void deleteOneEpic(Integer key) {
+        try {
+            super.deleteOneEpic(key);
             save();
-            return true;
+        } catch (DeleteException e) {
+            throw new DeleteException(e.getMessage());
         }
-        return false;
     }
 
     @Override
-    public boolean deleteOneSubtask(Integer key) {
-        if (super.deleteOneSubtask(key)) {
+    public void deleteOneSubtask(Integer key) {
+        try {
+            super.deleteOneSubtask(key);
             save();
-            return true;
+        } catch (DeleteException e) {
+            throw new DeleteException(e.getMessage());
         }
-        return false;
     }
 
     private void addTaskToHistory(Integer taskId) {
@@ -209,11 +220,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         switch (taskType) {
             case TASK:
                 Task task = fromString(line);
-                boolean isTrueCellTask = dataPlanner.fillCells(task);
-                if (isTrueCellTask) {
-                    tasks.put(task.getId(), task);
-                    prioritizedManager.add(task);
+                if (task.getStartTime() != null) {
+                    dataPlanner.fillCells(task);
                 }
+                tasks.put(task.getId(), task);
+                prioritizedManager.add(task);
                 break;
             case EPIC:
                 Epic epic = (Epic) fromString(line);
@@ -221,13 +232,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 break;
             default:
                 Subtask subtask = (Subtask) fromString(line);
-                boolean isTrueCellSubtask = dataPlanner.fillCells(subtask);
-                if (isTrueCellSubtask) {
-                    subtasks.put(subtask.getId(), subtask);
-                    prioritizedManager.add(subtask);
-                    Epic epic1 = epics.get(subtask.getEpicId());
-                    epic1.getSubtasksIds().add(subtask.getId());
+                if (subtask.getStartTime() != null) {
+                    dataPlanner.fillCells(subtask);
                 }
+                subtasks.put(subtask.getId(), subtask);
+                prioritizedManager.add(subtask);
+                Epic epic1 = epics.get(subtask.getEpicId());
+                epic1.getSubtasksIds().add(subtask.getId());
                 break;
         }
     }

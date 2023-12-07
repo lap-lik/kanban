@@ -1,5 +1,8 @@
 package service;
 
+import exception.CreateException;
+import exception.DataPlannerException;
+import exception.DeleteException;
 import model.Epic;
 import model.Status;
 import model.Subtask;
@@ -23,101 +26,115 @@ public class InMemoryTaskManager implements TaskManager {
     protected final DataPlanner dataPlanner = new DataPlanner();
 
     @Override
-    public boolean createTask(Task task) {
+    public void createTask(Task task) {
         if (task != null) {
-            boolean isTrueCell = dataPlanner.fillCells(task);
-            if (isTrueCell) {
-                task.setId(createId());
-                Task newTask = new Task(task);
-                tasks.put(newTask.getId(), newTask);
-                prioritizedManager.add(newTask);
+            if (task.getStartTime() != null) {
+                try {
+                    dataPlanner.fillCells(task);
+                } catch (DataPlannerException e) {
+                    throw new DataPlannerException(e.getMessage());
+                }
             }
-            return isTrueCell;
+            task.setId(createId());
+            Task newTask = new Task(task);
+            tasks.put(newTask.getId(), newTask);
+            prioritizedManager.add(newTask);
+        } else {
+            throw new CreateException("Задача не добавлена.");
         }
-        return false;
     }
 
     @Override
-    public boolean createEpic(Epic epic) {
+    public void createEpic(Epic epic) {
         if (epic != null) {
             epic.setId(createId());
             Epic newEpic = new Epic(epic);
             epics.put(newEpic.getId(), newEpic);
-            return true;
+        } else {
+            throw new CreateException("Большая задача не добавлена.");
         }
-        return false;
     }
 
     @Override
-    public boolean createSubtask(Subtask subtask) {
+    public void createSubtask(Subtask subtask) {
         if (subtask != null && epics.containsKey(subtask.getEpicId())) {
-            boolean isTrueCell = dataPlanner.fillCells(subtask);
-            if (isTrueCell) {
-                subtask.setId(createId());
-                Subtask newSubtask = new Subtask(subtask);
-                subtasks.put(newSubtask.getId(), newSubtask);
-                prioritizedManager.add(newSubtask);
-                Epic epic = epics.get(newSubtask.getEpicId());
-                epic.getSubtasksIds().add(newSubtask.getId());
-                updateEpic(epic);
+            if (subtask.getStartTime() != null) {
+                try {
+                    dataPlanner.fillCells(subtask);
+                } catch (DataPlannerException e) {
+                    throw new DataPlannerException(e.getMessage());
+                }
             }
-            return isTrueCell;
+            subtask.setId(createId());
+            Subtask newSubtask = new Subtask(subtask);
+            subtasks.put(newSubtask.getId(), newSubtask);
+            prioritizedManager.add(newSubtask);
+            Epic epic = epics.get(newSubtask.getEpicId());
+            epic.getSubtasksIds().add(newSubtask.getId());
+            updateEpic(epic);
+        } else {
+            throw new CreateException("Подзадача не добавлена.");
         }
-        return false;
     }
 
     @Override
-    public boolean updateTask(Task task) {
+    public void updateTask(Task task) {
         Integer taskId = task.getId();
         if (taskId != null && tasks.containsKey(taskId)) {
             Task savedTask = tasks.get(taskId);
             Task newTask = new Task(task);
-            dataPlanner.clearCells(savedTask);
-            boolean isTrueCell = dataPlanner.fillCells(newTask);
-            if (isTrueCell) {
-                tasks.put(taskId, newTask);
-                prioritizedManager.remove(savedTask);
-                prioritizedManager.add(newTask);
-            } else {
-                dataPlanner.fillCells(savedTask);
+            if (task.getStartTime() != null) {
+                dataPlanner.clearCells(savedTask);
+                try {
+                    dataPlanner.fillCells(newTask);
+                } catch (DataPlannerException e) {
+                    dataPlanner.fillCells(savedTask);
+                    throw new DataPlannerException(e.getMessage());
+                }
             }
-            return isTrueCell;
+            tasks.put(taskId, newTask);
+            prioritizedManager.remove(savedTask);
+            prioritizedManager.add(newTask);
+        } else {
+            throw new CreateException("Задача не обновлена.");
         }
-        return false;
     }
 
     @Override
-    public boolean updateSubtask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) {
         Integer subtaskId = subtask.getId();
         if (subtaskId != null && subtasks.containsKey(subtaskId)) {
             Subtask savedSubtask = subtasks.get(subtaskId);
             Subtask newSubtask = new Subtask(subtask);
-            dataPlanner.clearCells(savedSubtask);
-            boolean isTrueCell = dataPlanner.fillCells(subtask);
-            if (isTrueCell) {
-                subtasks.put(subtaskId, newSubtask);
-                prioritizedManager.remove(savedSubtask);
-                prioritizedManager.add(newSubtask);
-                updateEpic(epics.get(newSubtask.getEpicId()));
-            } else {
-                dataPlanner.fillCells(savedSubtask);
+            if (subtask.getStartTime() != null) {
+                dataPlanner.clearCells(savedSubtask);
+                try {
+                    dataPlanner.fillCells(subtask);
+                } catch (DataPlannerException e) {
+                    dataPlanner.fillCells(savedSubtask);
+                    throw new DataPlannerException(e.getMessage());
+                }
             }
-            return isTrueCell;
+            subtasks.put(subtaskId, newSubtask);
+            prioritizedManager.remove(savedSubtask);
+            prioritizedManager.add(newSubtask);
+            updateEpic(epics.get(newSubtask.getEpicId()));
+        } else {
+            throw new CreateException("Подзадача не обновлена.");
         }
-        return false;
     }
 
     @Override
-    public boolean updateEpic(Epic epic) {
+    public void updateEpic(Epic epic) {
         Integer epicId = epic.getId();
         if (epicId != null && epics.containsKey(epicId)) {
             Epic newEpic = new Epic(epic);
             newEpic.setStatus(checkStatus(newEpic));
             updateEpicDateTime(newEpic);
             epics.put(epicId, newEpic);
-            return true;
+        } else {
+            throw new CreateException("Большая задача не обновлена.");
         }
-        return false;
     }
 
     @Override
@@ -224,20 +241,20 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public boolean deleteOneTask(Integer key) {
+    public void deleteOneTask(Integer key) {
         Task task = tasks.get(key);
         if (task != null) {
             dataPlanner.clearCells(task);
             prioritizedManager.remove(task);
             historyManager.remove(key);
             tasks.remove(key);
-            return true;
+        } else {
+            throw new DeleteException("Задача по ID: " + key + ", не найдена и не удалена.");
         }
-        return false;
     }
 
     @Override
-    public boolean deleteOneEpic(Integer key) {
+    public void deleteOneEpic(Integer key) {
         Epic epic = epics.get(key);
         if (epic != null) {
             epic.getSubtasksIds().forEach(integer -> {
@@ -246,13 +263,13 @@ public class InMemoryTaskManager implements TaskManager {
             });
             historyManager.remove(key);
             epics.remove(key);
-            return true;
+        } else {
+            throw new DeleteException("Большая задача по ID: " + key + ", не найдена и не удалена.");
         }
-        return false;
     }
 
     @Override
-    public boolean deleteOneSubtask(Integer key) {
+    public void deleteOneSubtask(Integer key) {
         Subtask subtask = subtasks.get(key);
         if (subtask != null) {
             dataPlanner.clearCells(subtask);
@@ -262,9 +279,9 @@ public class InMemoryTaskManager implements TaskManager {
             updateEpic(epic);
             historyManager.remove(key);
             subtasks.remove(key);
-            return true;
+        } else {
+            throw new DeleteException("Подзадача по ID: " + key + ", не найдена и не удалена.");
         }
-        return false;
     }
 
     public Map<LocalDateTime, Boolean> getIntervalGrid() {

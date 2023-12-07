@@ -1,6 +1,6 @@
 package exception;
 
-public class DataPlannerException extends RuntimeException {
+public class DataPlannerException extends CreateException {
     public DataPlannerException(String message) {
         super(message);
     }

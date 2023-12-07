@@ -7,17 +7,17 @@ import model.Task;
 import java.util.List;
 
 public interface TaskManager {
-    boolean createTask(Task task);
+    void createTask(Task task);
 
-    boolean createEpic(Epic epic);
+    void createEpic(Epic epic);
 
-    boolean createSubtask(Subtask subtask);
+    void createSubtask(Subtask subtask);
 
-    boolean updateTask(Task task);
+    void updateTask(Task task);
 
-    boolean updateSubtask(Subtask subtask);
+    void updateSubtask(Subtask subtask);
 
-    boolean updateEpic(Epic epic);
+    void updateEpic(Epic epic);
 
     List<Task> getAllTasks();
 
@@ -43,9 +43,9 @@ public interface TaskManager {
 
     void deleteAllSubtasks();
 
-    boolean deleteOneTask(Integer key);
+    void deleteOneTask(Integer key);
 
-    boolean deleteOneEpic(Integer key);
+    void deleteOneEpic(Integer key);
 
-    boolean deleteOneSubtask(Integer key);
+    void deleteOneSubtask(Integer key);
 }

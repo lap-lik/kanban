@@ -100,7 +100,7 @@ class HttpTaskServerTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(405, response.statusCode(), "Код ответа должен быть - 201.");
-        assertEquals("Задача TASK не добавлена.", response.body(), "Неверное тело ответа.");
+        assertEquals("Задача не добавлена, время 10:15(01-01-2024) занято.", response.body(), "Неверное тело ответа.");
         assertEquals(1, taskManager.getAllTasks().size(), "Неверное количество задач.");
         assertEquals(1, taskManager.getAllTasks().get(0).getId(), "ID созданной задачи неверный.");
     }
@@ -180,7 +180,7 @@ class HttpTaskServerTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(405, response.statusCode(), "Код ответа должен быть - 200.");
-        assertEquals("Задача TASK-UPDATE не обновлена.", response.body(), "Неверное тело ответа.");
+        assertEquals("Задача не добавлена, время 10:15(01-02-2024) занято.", response.body(), "Неверное тело ответа.");
         assertEquals(1, taskManager.getAllTasks().size(), "Неверное количество задач.");
         assertEquals(1, taskManager.getAllTasks().get(0).getId(), "ID обновленной задачи неверный.");
     }
@@ -511,7 +511,7 @@ class HttpTaskServerTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(405, response.statusCode(), "Код ответа должен быть - 405.");
-        assertEquals("Ошибка запроса.", response.body(), "Неверное тело ответа.");
+        assertEquals("Задача по ID: 13, не найдена и не удалена.", response.body(), "Неверное тело ответа.");
         assertFalse(taskManager.getAllTasks().isEmpty(), "Задача не удалилась.");
     }
 
@@ -539,7 +539,7 @@ class HttpTaskServerTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(405, response.statusCode(), "Код ответа должен быть - 405.");
-        assertEquals("Ошибка запроса.", response.body(), "Неверное тело ответа.");
+        assertEquals("Большая задача по ID: 13, не найдена и не удалена.", response.body(), "Неверное тело ответа.");
         assertFalse(taskManager.getAllEpics().isEmpty(), "Большая задача не удалилась.");
     }
 
@@ -567,7 +567,7 @@ class HttpTaskServerTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(405, response.statusCode(), "Код ответа должен быть - 405.");
-        assertEquals("Ошибка запроса.", response.body(), "Неверное тело ответа.");
+        assertEquals("Подзадача по ID: 13, не найдена и не удалена.", response.body(), "Неверное тело ответа.");
         assertFalse(taskManager.getAllSubtasks().isEmpty(), "Подзадача не удалилась.");
     }
 }
