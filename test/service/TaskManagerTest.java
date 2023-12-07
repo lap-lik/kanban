@@ -277,24 +277,24 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 LocalDateTime.of(2024, 2, 2, 10, 15), Duration.ofMinutes(30), epicId);
         taskManager.createSubtask(subtask2);
         assertEquals(Status.NEW, taskManager.getOneEpic(epicId).getStatus(),
-                "После добавления сабстаски со статусом NEW, изменился статус Эпика-1");
+                "После добавления подзадачи со статусом NEW, изменился статус Эпика-1");
 
         Subtask updateSubtask2 = taskManager.getOneSubtask(subtask2.getId());
         updateSubtask2.setStatus(Status.IN_PROGRESS);
         taskManager.updateSubtask(updateSubtask2);
         assertEquals(Status.IN_PROGRESS, taskManager.getOneEpic(epicId).getStatus(),
-                "После изменения статуса сабстаски-2 на IN_PROGRESS, не изменился статус Эпика-1");
+                "После изменения статуса подзадачи-2 на IN_PROGRESS, не изменился статус Эпика-1");
 
         updateSubtask2.setStatus(Status.DONE);
         taskManager.updateSubtask(updateSubtask2);
         assertEquals(Status.IN_PROGRESS, taskManager.getOneEpic(epicId).getStatus(),
-                "После изменения статуса сабстаски-2 на DONE, изменился статус Эпика-1");
+                "После изменения статуса подзадачи-2 на DONE, изменился статус Эпика-1");
 
         Subtask updateSubtask1 = taskManager.getOneSubtask(subtask1.getId());
         updateSubtask1.setStatus(Status.DONE);
         taskManager.updateSubtask(updateSubtask1);
         assertEquals(Status.DONE, taskManager.getOneEpic(epicId).getStatus(),
-                "После изменения статуса сабстаски-1 на DONE, не изменился статус Эпика-1");
+                "После изменения статуса подзадачи-1 на DONE, не изменился статус Эпика-1");
     }
 
     @Test
@@ -369,20 +369,20 @@ abstract class TaskManagerTest<T extends TaskManager> {
         setUp();
         List<Subtask> checkListSubtasks = taskManager.getAllSubtasks();
         assertEquals(1, checkListSubtasks.size(),
-                "1 - Из базы возвращается не верное количество сабтасков.");
+                "1 - Из базы возвращается не верное количество подзадач.");
         Subtask subtask2 = new Subtask("SUBTASK-1", "SUBTASK-1-DESCRIPTION",
                 LocalDateTime.of(2024, 4, 1, 10, 15), Duration.ofMinutes(30), epic1.getId());
         taskManager.createSubtask(subtask2);
         checkListSubtasks = taskManager.getAllSubtasks();
         assertEquals(2, checkListSubtasks.size(),
-                "2 - Из базы возвращается не верное количество сабтасков.");
+                "2 - Из базы возвращается не верное количество подзадач.");
     }
 
     @Test
     void getAllSubtasks_EMPTY_MAP() {
         List<Subtask> checkListSubtasks = taskManager.getAllSubtasks();
         assertEquals(0, checkListSubtasks.size(),
-                "Из базы возвращается не верное количество сабтасков.");
+                "Из базы возвращается не верное количество подзадач.");
     }
 
 
@@ -462,16 +462,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getAllSubtasksByEpicId_EMPTY_MAP() {
-        final Integer epic1Id = 2;
-        final List<Subtask> subtasksIds1 = taskManager.getAllSubtasksByEpicId(epic1Id);
-        assertEquals(0, subtasksIds1.size(), "1 - Возвращается не верное количество ID подзадач.");
-    }
-
-    @Test
     void getAllSubtasksByEpicId_INVALID_ID() {
+        setUp();
+
         final List<Subtask> subtasksIds1 = taskManager.getAllSubtasksByEpicId(INVALID_TASK_ID);
-        assertEquals(0, subtasksIds1.size(), "1 - Возвращается не верное количество ID подзадач.");
+        assertNull(subtasksIds1, "По несуществующему ID большой задачи возвращается список ID подзадач.");
     }
 
 
@@ -509,7 +504,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, taskManager.getAllSubtasks().size(),
                 "1 - Количество подзадач в базе не совпадает.");
         taskManager.deleteAllEpics();
-        assertTrue(taskManager.getAllEpics().isEmpty(), "База эптков не пустая.");
+        assertTrue(taskManager.getAllEpics().isEmpty(), "База больших задач не пустая.");
         assertTrue(taskManager.getAllSubtasks().isEmpty(), "База подзадач не пустая.");
     }
 

@@ -145,21 +145,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void deleteOneTask(Integer key) {
-        super.deleteOneTask(key);
-        save();
+    public boolean deleteOneTask(Integer key) {
+        if (super.deleteOneTask(key)) {
+            save();
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    public boolean deleteOneEpic(Integer key) {
+        if (super.deleteOneEpic(key)) {
+            save();
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void deleteOneEpic(Integer key) {
-        super.deleteOneEpic(key);
-        save();
-    }
-
-    @Override
-    public void deleteOneSubtask(Integer key) {
-        super.deleteOneSubtask(key);
-        save();
+    public boolean deleteOneSubtask(Integer key) {
+        if (super.deleteOneSubtask(key)) {
+            save();
+            return true;
+        }
+        return false;
     }
 
     private void addTaskToHistory(Integer taskId) {
@@ -207,9 +217,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private Task fromString(String value) {
         String[] split = value.split(",");
         Integer taskId = Integer.parseInt(split[0]);
-        if (taskId > id) {
-            id = taskId;
-        }
+        id = Math.max(id, taskId);
         Type taskType = Type.valueOf(split[1]);
         String taskName = split[2];
         Status taskStatus = Status.valueOf(split[3]);
@@ -235,7 +243,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void save() {
+    protected void save() {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
             bufferedWriter.write(COLUMNS + "\n");
             for (Task task : tasks.values()) {
@@ -269,7 +277,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private String toCsv(Subtask task) {
-        return String.format("%d,%s,%s,%s,%s,%s,%s,%d\n", task.getId(), Type.SUBTASK, task.getName(), task.getStatus(), task.getDescription(),
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%d\n", task.getId(), Type.SUBTASK, task.getName(), task.getStatus(),
+                task.getDescription(),
                 localDateTimeToString(task.getStartTime()), durationToString(task.getDuration()), task.getEpicId());
     }
 

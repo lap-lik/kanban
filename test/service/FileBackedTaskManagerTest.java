@@ -1,17 +1,12 @@
 package service;
 
 import exception.ManagerSaveException;
-import model.Epic;
-import model.Subtask;
-import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static constants.Constants.FILE_PATH;
@@ -178,46 +173,20 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTasksMa
 
     @Test
     void loadFromFile() {
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
-
-        task1 = new Task("TASK-1", "TASK-1-DESCRIPTION",
-                LocalDateTime.of(2024, 1, 1, 10, 9), Duration.ofMinutes(16));
-        fileBackedTasksManager.createTask(task1);
-        Task task2 = new Task("TASK-2", "TASK-2-DESCRIPTION",
-                LocalDateTime.of(2024, 1, 2, 10, 28), Duration.ofMinutes(29));
-        fileBackedTasksManager.createTask(task2);
-        Task task3 = new Task("TASK-3", "TASK-3-DESCRIPTION",
-                LocalDateTime.of(2024, 1, 3, 10, 39), Duration.ofMinutes(47));
-        fileBackedTasksManager.createTask(task3);
-
-        epic1 = new Epic("EPIC-1", "EPIC-1-DESCRIPTION");
-        fileBackedTasksManager.createEpic(epic1);
-        Epic epic2 = new Epic("EPIC-2", "EPIC-2-DESCRIPTION");
-        fileBackedTasksManager.createEpic(epic2);
-
-        subtask1 = new Subtask("SUBTASK-1", "SUBTASK-1-DESCRIPTION",
-                LocalDateTime.of(2024, 2, 1, 10, 11), Duration.ofMinutes(15), epic1.getId());
-        fileBackedTasksManager.createSubtask(subtask1);
-        Subtask subtask2 = new Subtask("SUBTASK-2", "SUBTASK-2-DESCRIPTION",
-                LocalDateTime.of(2024, 2, 2, 10, 32), Duration.ofMinutes(30), epic2.getId());
-        fileBackedTasksManager.createSubtask(subtask2);
-        Subtask subtask3 = new Subtask("SUBTASK-3", "SUBTASK-3-DESCRIPTION",
-                LocalDateTime.of(2024, 2, 3, 10, 44), Duration.ofMinutes(45), epic2.getId());
-        fileBackedTasksManager.createSubtask(subtask3);
-
-        fileBackedTasksManager.getOneEpic(epic2.getId());
-        fileBackedTasksManager.getOneTask(task3.getId());
-        fileBackedTasksManager.getOneSubtask(subtask1.getId());
-        fileBackedTasksManager.getOneTask(task1.getId());
-        FileBackedTasksManager taskManagerLoadFromFile = FileBackedTasksManager.loadFromFile(file);
-
-        assertEquals(fileBackedTasksManager.getAllTasks(), taskManagerLoadFromFile.getAllTasks(),
+        setUp();
+        taskManager.getOneEpic(2);
+        taskManager.getOneTask(1);
+        taskManager.getOneSubtask(3);
+        FileBackedTasksManager taskManagerLoadFromFile = (FileBackedTasksManager) Managers.getDefaultFileBackedTasksManager();
+        assertEquals(taskManager.getAllTasks(), taskManagerLoadFromFile.getAllTasks(),
                 "Задачи из файла записываются в базу неверно.");
-        assertEquals(fileBackedTasksManager.getAllSubtasks(), taskManagerLoadFromFile.getAllSubtasks(),
+        assertEquals(taskManager.getAllSubtasks(), taskManagerLoadFromFile.getAllSubtasks(),
                 "Подзадачи из файла записываются в базу неверно.");
-        assertEquals(fileBackedTasksManager.getAllEpics(), taskManagerLoadFromFile.getAllEpics(),
+        assertEquals(taskManager.getAllEpics(), taskManagerLoadFromFile.getAllEpics(),
                 "Эпики из файла записываются в базу неверно.");
-        assertEquals(fileBackedTasksManager.getHistory(), taskManagerLoadFromFile.getHistory(),
+        assertEquals(taskManager.getPrioritizedTasks(), taskManagerLoadFromFile.getPrioritizedTasks(),
+                "Список приоритетов из файла записывается в базу неверно.");
+        assertEquals(taskManager.getHistory(), taskManagerLoadFromFile.getHistory(),
                 "История из файла записывается в базу неверно.");
     }
 

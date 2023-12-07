@@ -1,12 +1,8 @@
 package model;
 
-import service.Type;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
-
-import static constants.Constants.LOCAL_DATA_TIME_FORMAT;
 
 public class Task {
     protected Integer id;

@@ -43,7 +43,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createSubtask(Subtask subtask) {
-        if (subtask != null) {
+        if (subtask != null && epics.containsKey(subtask.getEpicId())) {
             boolean isTrueCell = dataPlanner.fillCells(subtask);
             if (isTrueCell) {
                 subtask.setId(createId());
@@ -174,8 +174,9 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(key).getSubtasksIds().stream()
                     .map(subtasks::get)
                     .forEach(subtasksByEpic::add);
+            return subtasksByEpic;
         }
-        return subtasksByEpic;
+        return null;
     }
 
     @Override
@@ -225,18 +226,20 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteOneTask(Integer key) {
+    public boolean deleteOneTask(Integer key) {
         Task task = tasks.get(key);
         if (task != null) {
             dataPlanner.clearCells(task);
             prioritizedManager.remove(task);
             historyManager.remove(key);
             tasks.remove(key);
+            return true;
         }
+        return false;
     }
 
     @Override
-    public void deleteOneEpic(Integer key) {
+    public boolean deleteOneEpic(Integer key) {
         Epic epic = epics.get(key);
         if (epic != null) {
             epic.getSubtasksIds().forEach(integer -> {
@@ -245,11 +248,13 @@ public class InMemoryTaskManager implements TaskManager {
             });
             historyManager.remove(key);
             epics.remove(key);
+            return true;
         }
+        return false;
     }
 
     @Override
-    public void deleteOneSubtask(Integer key) {
+    public boolean deleteOneSubtask(Integer key) {
         Subtask subtask = subtasks.get(key);
         if (subtask != null) {
             dataPlanner.clearCells(subtask);
@@ -259,7 +264,9 @@ public class InMemoryTaskManager implements TaskManager {
             updateEpic(epic);
             historyManager.remove(key);
             subtasks.remove(key);
+            return true;
         }
+        return false;
     }
 
     public Map<LocalDateTime, Boolean> getIntervalGrid() {

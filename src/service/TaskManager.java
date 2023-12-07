@@ -47,9 +47,9 @@ public interface TaskManager {
 
     void deleteAllSubtasks();
 
-    void deleteOneTask(Integer key);
+    boolean deleteOneTask(Integer key);
 
-    void deleteOneEpic(Integer key);
+    boolean deleteOneEpic(Integer key);
 
-    void deleteOneSubtask(Integer key);
+    boolean deleteOneSubtask(Integer key);
 }
