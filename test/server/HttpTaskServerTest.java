@@ -87,6 +87,25 @@ class HttpTaskServerTest {
     }
 
     @Test
+    void createTask_INTERSECTION_OF_TAME() throws IOException, InterruptedException {
+        setUp();
+        Task task = new Task("TASK", "TASK-DESCRIPTION",
+                LocalDateTime.of(2024, 1, 1, 10, 15), Duration.ofMinutes(30));
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks/task/");
+        String json = gson.toJson(task);
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(405, response.statusCode(), "Код ответа должен быть - 201.");
+        assertEquals("Задача TASK не добавлена.", response.body(), "Неверное тело ответа.");
+        assertEquals(1, taskManager.getAllTasks().size(), "Неверное количество задач.");
+        assertEquals(1, taskManager.getAllTasks().get(0).getId(), "ID созданной задачи неверный.");
+    }
+
+    @Test
     void createEpic_STANDART() throws IOException, InterruptedException {
         Epic epic = new Epic("EPIC", "EPIC-DESCRIPTION");
 
@@ -140,6 +159,28 @@ class HttpTaskServerTest {
 
         assertEquals(200, response.statusCode(), "Код ответа должен быть - 200.");
         assertEquals("Задача = TASK-UPDATE обновлена.", response.body(), "Неверное тело ответа.");
+        assertEquals(1, taskManager.getAllTasks().size(), "Неверное количество задач.");
+        assertEquals(1, taskManager.getAllTasks().get(0).getId(), "ID обновленной задачи неверный.");
+    }
+
+    @Test
+    void updateTask_INTERSECTION_OF_TAME() throws IOException, InterruptedException {
+        setUp();
+        Task task = taskManager.getOneTask(task1.getId());
+        task.setName("TASK-UPDATE");
+        task.setDescription("TASK-UPDATE-DESCRIPTION");
+        task.setStartTime(LocalDateTime.of(2024, 2, 1, 10, 15));
+        task.setDuration(Duration.ofMinutes(60));
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks/task/");
+        String json = gson.toJson(task);
+        final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(405, response.statusCode(), "Код ответа должен быть - 200.");
+        assertEquals("Задача TASK-UPDATE не обновлена.", response.body(), "Неверное тело ответа.");
         assertEquals(1, taskManager.getAllTasks().size(), "Неверное количество задач.");
         assertEquals(1, taskManager.getAllTasks().get(0).getId(), "ID обновленной задачи неверный.");
     }
@@ -459,12 +500,13 @@ class HttpTaskServerTest {
         assertEquals("Удалена задача с ID = 1", response.body(), "Неверное тело ответа.");
         assertTrue(taskManager.getAllTasks().isEmpty(), "Задача не удалилась.");
     }
+
     @Test
     void deleteOneTask_INVALID_ID() throws IOException, InterruptedException {
         setUp();
 
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks/task/?id="+INVALID_TASK_ID);
+        URI url = URI.create("http://localhost:8080/tasks/task/?id=" + INVALID_TASK_ID);
         HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -486,12 +528,13 @@ class HttpTaskServerTest {
         assertEquals("Удалена большая задача с ID = 2", response.body(), "Неверное тело ответа.");
         assertTrue(taskManager.getAllEpics().isEmpty(), "Большая задача не удалилась.");
     }
+
     @Test
     void deleteOneEpic_INVALID_ID() throws IOException, InterruptedException {
         setUp();
 
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks/epic/?id="+INVALID_TASK_ID);
+        URI url = URI.create("http://localhost:8080/tasks/epic/?id=" + INVALID_TASK_ID);
         HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -513,12 +556,13 @@ class HttpTaskServerTest {
         assertEquals("Удалена подзадача с ID = 3", response.body(), "Неверное тело ответа.");
         assertTrue(taskManager.getAllSubtasks().isEmpty(), "Подзадача не удалилась.");
     }
+
     @Test
     void deleteOneSubtask_INVALID_ID() throws IOException, InterruptedException {
         setUp();
 
         HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks/subtask/?id="+INVALID_TASK_ID);
+        URI url = URI.create("http://localhost:8080/tasks/subtask/?id=" + INVALID_TASK_ID);
         HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 

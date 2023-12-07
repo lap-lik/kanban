@@ -25,11 +25,11 @@ public class PrioritizedManager {
         }
     }
 
-    public void add(Task task){
+    public void add(Task task) {
         prioritizedTasks.add(task);
     }
 
-    public void remove(Task task){
+    public void remove(Task task) {
         prioritizedTasks.remove(task);
     }
 

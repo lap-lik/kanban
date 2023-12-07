@@ -4,24 +4,20 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public interface TaskManager {
-    void createTask(Task task);
+    boolean createTask(Task task);
 
-    void createEpic(Epic epic);
+    boolean createEpic(Epic epic);
 
-    void createSubtask(Subtask subtask);
+    boolean createSubtask(Subtask subtask);
 
-    void updateTask(Task task);
+    boolean updateTask(Task task);
 
-    void updateSubtask(Subtask subtask);
+    boolean updateSubtask(Subtask subtask);
 
-    void updateEpic(Epic epic);
+    boolean updateEpic(Epic epic);
 
     List<Task> getAllTasks();
 

@@ -7,7 +7,10 @@ import model.Task;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -20,7 +23,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final DataPlanner dataPlanner = new DataPlanner();
 
     @Override
-    public void createTask(Task task) {
+    public boolean createTask(Task task) {
         if (task != null) {
             boolean isTrueCell = dataPlanner.fillCells(task);
             if (isTrueCell) {
@@ -29,20 +32,24 @@ public class InMemoryTaskManager implements TaskManager {
                 tasks.put(newTask.getId(), newTask);
                 prioritizedManager.add(newTask);
             }
+            return isTrueCell;
         }
+        return false;
     }
 
     @Override
-    public void createEpic(Epic epic) {
+    public boolean createEpic(Epic epic) {
         if (epic != null) {
             epic.setId(createId());
             Epic newEpic = new Epic(epic);
             epics.put(newEpic.getId(), newEpic);
+            return true;
         }
+        return false;
     }
 
     @Override
-    public void createSubtask(Subtask subtask) {
+    public boolean createSubtask(Subtask subtask) {
         if (subtask != null && epics.containsKey(subtask.getEpicId())) {
             boolean isTrueCell = dataPlanner.fillCells(subtask);
             if (isTrueCell) {
@@ -54,72 +61,63 @@ public class InMemoryTaskManager implements TaskManager {
                 epic.getSubtasksIds().add(newSubtask.getId());
                 updateEpic(epic);
             }
+            return isTrueCell;
         }
+        return false;
     }
 
     @Override
-    public void updateTask(Task task) {
+    public boolean updateTask(Task task) {
         Integer taskId = task.getId();
         if (taskId != null && tasks.containsKey(taskId)) {
             Task savedTask = tasks.get(taskId);
-            boolean isStartTimeEqual = Objects.equals(savedTask.getStartTime(), task.getStartTime());
-            boolean isEndTimeEqual = Objects.equals(savedTask.getEndTime(), task.getEndTime());
             Task newTask = new Task(task);
-            if (isStartTimeEqual && isEndTimeEqual) {
+            dataPlanner.clearCells(savedTask);
+            boolean isTrueCell = dataPlanner.fillCells(newTask);
+            if (isTrueCell) {
                 tasks.put(taskId, newTask);
                 prioritizedManager.remove(savedTask);
                 prioritizedManager.add(newTask);
             } else {
-                dataPlanner.clearCells(savedTask);
-                boolean isTrueCell = dataPlanner.fillCells(newTask);
-                if (isTrueCell) {
-                    tasks.put(taskId, newTask);
-                    prioritizedManager.remove(savedTask);
-                    prioritizedManager.add(newTask);
-                } else {
-                    dataPlanner.fillCells(savedTask);
-                }
+                dataPlanner.fillCells(savedTask);
             }
+            return isTrueCell;
         }
+        return false;
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public boolean updateSubtask(Subtask subtask) {
         Integer subtaskId = subtask.getId();
         if (subtaskId != null && subtasks.containsKey(subtaskId)) {
             Subtask savedSubtask = subtasks.get(subtaskId);
-            boolean isStartTimeEqual = Objects.equals(savedSubtask.getStartTime(), subtask.getStartTime());
-            boolean isEndTimeEqual = Objects.equals(savedSubtask.getEndTime(), subtask.getEndTime());
             Subtask newSubtask = new Subtask(subtask);
-            if (isStartTimeEqual || isEndTimeEqual) {
+            dataPlanner.clearCells(savedSubtask);
+            boolean isTrueCell = dataPlanner.fillCells(subtask);
+            if (isTrueCell) {
                 subtasks.put(subtaskId, newSubtask);
                 prioritizedManager.remove(savedSubtask);
                 prioritizedManager.add(newSubtask);
                 updateEpic(epics.get(newSubtask.getEpicId()));
             } else {
-                dataPlanner.clearCells(savedSubtask);
-                boolean isTrueCell = dataPlanner.fillCells(subtask);
-                if (isTrueCell) {
-                    subtasks.put(subtaskId, newSubtask);
-                    prioritizedManager.remove(savedSubtask);
-                    prioritizedManager.add(newSubtask);
-                    updateEpic(epics.get(newSubtask.getEpicId()));
-                } else {
-                    dataPlanner.fillCells(savedSubtask);
-                }
+                dataPlanner.fillCells(savedSubtask);
             }
+            return isTrueCell;
         }
+        return false;
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public boolean updateEpic(Epic epic) {
         Integer epicId = epic.getId();
         if (epicId != null && epics.containsKey(epicId)) {
             Epic newEpic = new Epic(epic);
             newEpic.setStatus(checkStatus(newEpic));
             updateEpicDateTime(newEpic);
             epics.put(epicId, newEpic);
+            return true;
         }
+        return false;
     }
 
     @Override

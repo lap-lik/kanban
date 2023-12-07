@@ -63,39 +63,57 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createTask(Task task) {
-        super.createTask(task);
-        save();
+    public boolean createTask(Task task) {
+        if (super.createTask(task)) {
+            save();
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void createEpic(Epic epic) {
-        super.createEpic(epic);
-        save();
+    public boolean createEpic(Epic epic) {
+        if (super.createEpic(epic)) {
+            save();
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void createSubtask(Subtask subtask) {
-        super.createSubtask(subtask);
-        save();
+    public boolean createSubtask(Subtask subtask) {
+        if (super.createSubtask(subtask)) {
+            save();
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void updateTask(Task task) {
-        super.updateTask(task);
-        save();
+    public boolean updateTask(Task task) {
+        if (super.updateTask(task)) {
+            save();
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
-        super.updateSubtask(subtask);
-        save();
+    public boolean updateSubtask(Subtask subtask) {
+        if (super.updateSubtask(subtask)) {
+            save();
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void updateEpic(Epic epic) {
-        super.updateEpic(epic);
-        save();
+    public boolean updateEpic(Epic epic) {
+        if (super.updateEpic(epic)) {
+            save();
+            return true;
+        }
+        return false;
     }
 
     @Override

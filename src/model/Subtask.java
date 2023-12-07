@@ -1,7 +1,5 @@
 package model;
 
-import service.Type;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -23,6 +21,7 @@ public class Subtask extends Task {
         super(name, description, startTime, duration);
         this.epicId = epicId;
     }
+
     public Subtask(Subtask task) {
         super(task);
         epicId = task.getEpicId();

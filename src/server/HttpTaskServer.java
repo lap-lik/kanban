@@ -3,7 +3,6 @@ package server;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import exception.DataPlannerException;
 import model.Epic;
 import model.Subtask;
 import model.Task;
@@ -141,10 +140,16 @@ public class HttpTaskServer {
         try {
             Task task = gson.fromJson(value, Task.class);
             if (taskManager.getOneTask(task.getId()) != null) {
-                taskManager.updateTask(task);
+                boolean isUpdate = taskManager.updateTask(task);
+                if (!isUpdate) {
+                    sendText(exchange, "Задача " + task.getName() + " не обновлена.", 405);
+                }
                 sendText(exchange, "Задача = " + task.getName() + " обновлена.", 200);
             } else {
-                taskManager.createTask(task);
+                boolean isSave = taskManager.createTask(task);
+                if (!isSave) {
+                    sendText(exchange, "Задача " + task.getName() + " не добавлена.", 405);
+                }
                 sendText(exchange, "Задача = " + task.getName() + " добавлена.", 201);
             }
         } catch (IOException exception) {
@@ -171,19 +176,11 @@ public class HttpTaskServer {
         try {
             Epic epic = gson.fromJson(value, Epic.class);
             if (taskManager.getOneEpic(epic.getId()) != null) {
-                try {
-                    taskManager.updateEpic(epic);
-                    sendText(exchange, "Большая задача = " + epic.getName() + " обновлена.", 200);
-                } catch (DataPlannerException e) {
-                    sendText(exchange, e.getMessage(), 405);
-                }
+                taskManager.updateEpic(epic);
+                sendText(exchange, "Большая задача = " + epic.getName() + " обновлена.", 200);
             } else {
-                try {
-                    taskManager.createEpic(epic);
-                    sendText(exchange, "Большая задача = " + epic.getName() + " добавлена.", 201);
-                } catch (DataPlannerException e) {
-                    sendText(exchange, e.getMessage(), 405);
-                }
+                taskManager.createEpic(epic);
+                sendText(exchange, "Большая задача = " + epic.getName() + " добавлена.", 201);
             }
         } catch (IOException exception) {
             exception.printStackTrace();
