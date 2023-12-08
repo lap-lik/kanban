@@ -10,6 +10,7 @@ import model.Task;
 import service.TaskManager;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
 import static constants.Constants.*;
@@ -271,7 +272,10 @@ public class HttpTaskServer {
         byte[] resp = text.getBytes(UTF_8);
         exchange.getResponseHeaders().add("Content-Type", "application/json");
         exchange.sendResponseHeaders(code, resp.length);
-        exchange.getResponseBody().write(resp);
+        try (OutputStream outputStream = exchange.getResponseBody()) {
+            outputStream.write(resp);
+        }
+        exchange.close();
     }
 
     private int parsePathId(String pathId) {

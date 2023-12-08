@@ -118,6 +118,7 @@ public class KVServer {
         System.out.println("API_TOKEN: " + apiToken);
         server.start();
     }
+
     public void stop() {
         server.stop(0);
         System.out.println("Сервер на порту " + PORT_KV_SERVER + " остановлен.");
