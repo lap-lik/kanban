@@ -2,6 +2,7 @@ package service;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import exception.KVException;
 import model.Epic;
 import model.Subtask;
 import model.Task;
@@ -9,7 +10,7 @@ import server.KVTaskClient;
 
 import java.util.List;
 
-import static constants.Constants.GSON;
+import static constants.Constants.*;
 
 public class HttpTaskManager extends FileBackedTasksManager {
 
@@ -28,9 +29,70 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
+    @Override
+    public void save() {
+        try {
+            client.put(KV_KYE_TASK, gson.toJson(getAllTasks()));
+        } catch (KVException e) {
+            System.err.printf("%s По ключу - %s.\n", e.getMessage(), KV_KYE_TASK);
+        }
+        try {
+            client.put(KV_KYE_EPIC, gson.toJson(getAllEpics()));
+        } catch (KVException e) {
+            System.err.printf("%s По ключу - %s.\n", e.getMessage(), KV_KYE_EPIC);
+        }
+        try {
+            client.put(KV_KYE_SUBTASK, gson.toJson(getAllSubtasks()));
+        } catch (KVException e) {
+            System.err.printf("%s По ключу - %s.\n", e.getMessage(), KV_KYE_SUBTASK);
+        }
+        try {
+            client.put(KV_KYE_HISTORY, gson.toJson(getHistory()));
+        } catch (KVException e) {
+            System.err.printf("%s По ключу - %s.\n", e.getMessage(), KV_KYE_HISTORY);
+        }
+    }
+
     public void loadFromServer() {
-        List<Task> tasksFromServer = gson.fromJson(client.load("/tasks"), new TypeToken<List<Task>>() {
-        }.getType());
+        List<Task> tasksFromServer;
+        List<Epic> epicsFromServer;
+        List<Subtask> subtasksFromServer;
+        List<Task> historyFromServer;
+        try {
+            tasksFromServer = gson.fromJson(client.load(KV_KYE_TASK), new TypeToken<List<Task>>() {
+            }.getType());
+        } catch (KVException e) {
+            System.err.printf("%s По ключу - %s.\n", e.getMessage(), KV_KYE_TASK);
+            tasksFromServer = null;
+        }
+        try {
+            epicsFromServer = gson.fromJson(client.load(KV_KYE_EPIC), new TypeToken<List<Epic>>() {
+            }.getType());
+        } catch (KVException e) {
+            System.err.printf("%s По ключу - %s.\n", e.getMessage(), KV_KYE_EPIC);
+            epicsFromServer = null;
+        }
+        try {
+            subtasksFromServer = gson.fromJson(client.load(KV_KYE_SUBTASK), new TypeToken<List<Subtask>>() {
+            }.getType());
+        } catch (KVException e) {
+            System.err.printf("%s По ключу - %s.\n", e.getMessage(), KV_KYE_SUBTASK);
+            subtasksFromServer = null;
+        }
+        try {
+            historyFromServer = gson.fromJson(client.load(KV_KYE_HISTORY), new TypeToken<List<Task>>() {
+            }.getType());
+        } catch (KVException e) {
+            System.err.printf("%s По ключу - %s.\n", e.getMessage(), KV_KYE_HISTORY);
+            historyFromServer = null;
+        }
+        loadTasks(tasksFromServer);
+        loadEpics(epicsFromServer);
+        loadSubtasks(subtasksFromServer);
+        loadHistory(historyFromServer);
+    }
+
+    private void loadTasks(List<Task> tasksFromServer) {
         if (tasksFromServer != null) {
             for (Task task : tasksFromServer) {
                 int taskId = task.getId();
@@ -42,9 +104,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 prioritizedManager.add(task);
             }
         }
+    }
 
-        List<Epic> epicsFromServer = gson.fromJson(client.load("/epics"), new TypeToken<List<Epic>>() {
-        }.getType());
+    private void loadEpics(List<Epic> epicsFromServer) {
         if (epicsFromServer != null) {
             for (Epic epic : epicsFromServer) {
                 int epicId = epic.getId();
@@ -52,8 +114,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 epics.put(epicId, epic);
             }
         }
-        List<Subtask> subtasksFromServer = gson.fromJson(client.load("/subtasks"), new TypeToken<List<Subtask>>() {
-        }.getType());
+    }
+
+    private void loadSubtasks(List<Subtask> subtasksFromServer) {
         if (subtasksFromServer != null) {
             for (Subtask subtask : subtasksFromServer) {
                 int subtaskId = subtask.getId();
@@ -65,8 +128,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 prioritizedManager.add(subtask);
             }
         }
-        List<Task> historyFromServer = gson.fromJson(client.load("/history"), new TypeToken<List<Task>>() {
-        }.getType());
+    }
+
+    private void loadHistory(List<Task> historyFromServer) {
         if (historyFromServer != null) {
             for (Task taskFromHistory : historyFromServer) {
                 Integer taskId = taskFromHistory.getId();
@@ -82,18 +146,5 @@ public class HttpTaskManager extends FileBackedTasksManager {
                 }
             }
         }
-    }
-
-    @Override
-    public void save() {
-        String tasksJson = gson.toJson(getAllTasks());
-        client.put("/tasks", tasksJson);
-        String epicsJson = gson.toJson(getAllEpics());
-        client.put("/epics", epicsJson);
-        String subtasksJson = gson.toJson(getAllSubtasks());
-        client.put("/subtasks", subtasksJson);
-
-        String historyJson = gson.toJson(getHistory());
-        client.put("/history", historyJson);
     }
 }

@@ -23,7 +23,7 @@ public class HttpTaskServer {
 
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.taskManager = taskManager;
-        taskServer = HttpServer.create(new InetSocketAddress("localhost", PORT_CLIENT), 0);
+        taskServer = HttpServer.create(new InetSocketAddress(HOSTNAME, PORT_CLIENT), 0);
         taskServer.createContext("/tasks", this::TasksHandler);
         gson = GSON;
     }
@@ -46,6 +46,8 @@ public class HttpTaskServer {
             }
         } catch (IOException exception) {
             exception.printStackTrace();
+        } finally {
+            exchange.close();
         }
     }
 
@@ -57,7 +59,7 @@ public class HttpTaskServer {
 
     public void stop() {
         taskServer.stop(0);
-        System.out.println("Сервер на порту " + PORT_CLIENT + " остановлен.");
+        System.out.println("\nСервер на порту " + PORT_CLIENT + " остановлен.");
     }
 
     private void getMethods(HttpExchange exchange) {
@@ -109,6 +111,8 @@ public class HttpTaskServer {
             }
         } catch (IOException exception) {
             exception.printStackTrace();
+        } finally {
+            exchange.close();
         }
     }
 
@@ -133,8 +137,10 @@ public class HttpTaskServer {
             } else {
                 sendText(exchange, "Ошибка запроса.", 405);
             }
-        } catch (Exception exception) {
+        } catch (IOException exception) {
             exception.printStackTrace();
+        } finally {
+            exchange.close();
         }
     }
 
@@ -158,6 +164,8 @@ public class HttpTaskServer {
             }
         } catch (IOException exception) {
             exception.printStackTrace();
+        } finally {
+            exchange.close();
         }
     }
 
@@ -181,6 +189,8 @@ public class HttpTaskServer {
             }
         } catch (IOException exception) {
             exception.printStackTrace();
+        } finally {
+            exchange.close();
         }
     }
 
@@ -204,6 +214,8 @@ public class HttpTaskServer {
             }
         } catch (IOException exception) {
             exception.printStackTrace();
+        } finally {
+            exchange.close();
         }
     }
 
@@ -265,6 +277,8 @@ public class HttpTaskServer {
             }
         } catch (IOException exception) {
             exception.printStackTrace();
+        } finally {
+            exchange.close();
         }
     }
 
@@ -274,8 +288,9 @@ public class HttpTaskServer {
         exchange.sendResponseHeaders(code, resp.length);
         try (OutputStream outputStream = exchange.getResponseBody()) {
             outputStream.write(resp);
+        } finally {
+            exchange.close();
         }
-        exchange.close();
     }
 
     private int parsePathId(String pathId) {

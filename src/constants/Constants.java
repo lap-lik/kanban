@@ -17,8 +17,13 @@ public class Constants {
     public static final int INTERVAL_MINUTES = 15;
     public static final String URL_KV_SERVER = "http://localhost:";
     public static final String URL_CLIENT = "http://localhost:";
+    public static final String HOSTNAME = "localhost";
     public static final int PORT_CLIENT = 8080;
     public static final int PORT_KV_SERVER = 8078;
+    public static final String KV_KYE_TASK = "/task";
+    public static final String KV_KYE_SUBTASK = "/subtask";
+    public static final String KV_KYE_EPIC = "/epic";
+    public static final String KV_KYE_HISTORY = "/history";
     public static GsonBuilder gsonBuilder = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .registerTypeAdapter(Duration.class, new DurationTimeAdapter())

@@ -1,6 +1,6 @@
 package server;
 
-import exception.ManagerSaveException;
+import exception.KVException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,11 +25,11 @@ public class KVTaskClient {
             HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).GET().build();
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                throw new ManagerSaveException("Не удалось загрузить запрос, статус запроса: " + response.statusCode());
+                throw new KVException("Ошибка запроса, статус запроса: " + response.statusCode());
             }
             return response.body();
         } catch (IOException | InterruptedException e) {
-            throw new ManagerSaveException("Не удалось загрузить запрос.", e);
+            throw new KVException("Ошибка регистрации на KVServer.", e);
         }
     }
 
@@ -42,10 +42,10 @@ public class KVTaskClient {
                     .build();
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                throw new ManagerSaveException("Не удалось загрузить запрос, статус запроса: " + response.statusCode());
+                throw new KVException("Ошибка запроса, статус запроса: " + response.statusCode());
             }
         } catch (IOException | InterruptedException e) {
-            throw new ManagerSaveException("Не удалось загрузить запрос.", e);
+            throw new KVException("Не удалось сохранить данные на KVServer.", e);
         }
     }
 
@@ -55,11 +55,11 @@ public class KVTaskClient {
             HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).GET().build();
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                throw new ManagerSaveException("Не удалось загрузить запрос, статус запроса: " + response.statusCode());
+                throw new KVException("Ошибка запроса, статус запроса: " + response.statusCode());
             }
             return response.body();
         } catch (IOException | InterruptedException e) {
-            throw new ManagerSaveException("Не удалось загрузить запрос.", e);
+            throw new KVException("Не удалось загрузить данные с KVServer.", e);
         }
     }
 }
