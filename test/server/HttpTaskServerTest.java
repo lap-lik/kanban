@@ -499,6 +499,8 @@ class HttpTaskServerTest {
         assertEquals(200, response.statusCode(), "Код ответа должен быть - 200.");
         assertEquals("Удалена задача с ID = 1", response.body(), "Неверное тело ответа.");
         assertTrue(taskManager.getAllTasks().isEmpty(), "Задача не удалилась.");
+        assertEquals(1, taskManager.getPrioritizedTasks().size(),
+                "Задача из списка приоритетов не удалилась.");
     }
 
     @Test
@@ -527,6 +529,9 @@ class HttpTaskServerTest {
         assertEquals(200, response.statusCode(), "Код ответа должен быть - 200.");
         assertEquals("Удалена большая задача с ID = 2", response.body(), "Неверное тело ответа.");
         assertTrue(taskManager.getAllEpics().isEmpty(), "Большая задача не удалилась.");
+        assertTrue(taskManager.getAllSubtasks().isEmpty(), "Подзадачи не удалилась.");
+        assertEquals(1, taskManager.getPrioritizedTasks().size(),
+                "Подзадачи из списка приоритетов не удалились.");
     }
 
     @Test

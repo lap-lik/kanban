@@ -257,9 +257,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteOneEpic(Integer key) {
         Epic epic = epics.get(key);
         if (epic != null) {
-            epic.getSubtasksIds().forEach(integer -> {
-                historyManager.remove(integer);
-                subtasks.remove(integer);
+            epic.getSubtasksIds().forEach(subtaskId -> {
+                historyManager.remove(subtaskId);
+                prioritizedManager.remove(subtasks.get(subtaskId));
+                subtasks.remove(subtaskId);
             });
             historyManager.remove(key);
             epics.remove(key);
@@ -278,6 +279,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.getSubtasksIds().remove(key);
             updateEpic(epic);
             historyManager.remove(key);
+            prioritizedManager.remove(subtask);
             subtasks.remove(key);
         } else {
             throw new DeleteException("Подзадача по ID: " + key + ", не найдена и не удалена.");
