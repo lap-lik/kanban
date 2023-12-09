@@ -21,7 +21,7 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
             kvServer.start();
             super.taskManager = new HttpTaskManager(URL_KV_SERVER + PORT_KV_SERVER);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
     }
 

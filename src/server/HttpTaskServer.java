@@ -45,7 +45,7 @@ public class HttpTaskServer {
                     sendText(exchange, "Ошибка запроса.", 405);
             }
         } catch (IOException exception) {
-            exception.printStackTrace();
+            System.err.println(exception.getMessage());
         } finally {
             exchange.close();
         }
@@ -110,7 +110,7 @@ public class HttpTaskServer {
                 }
             }
         } catch (IOException exception) {
-            exception.printStackTrace();
+            System.err.println(exception.getMessage());
         } finally {
             exchange.close();
         }
@@ -138,7 +138,7 @@ public class HttpTaskServer {
                 sendText(exchange, "Ошибка запроса.", 405);
             }
         } catch (IOException exception) {
-            exception.printStackTrace();
+            System.err.println(exception.getMessage());
         } finally {
             exchange.close();
         }
@@ -150,20 +150,20 @@ public class HttpTaskServer {
             if (taskManager.getOneTask(task.getId()) != null) {
                 try {
                     taskManager.updateTask(task);
-                    sendText(exchange, "Задача = " + task.getName() + " обновлена.", 200);
+                    sendText(exchange, String.format("Задача = %s обновлена.", task.getName()), 200);
                 } catch (TaskManagerException e) {
                     sendText(exchange, e.getMessage(), 405);
                 }
             } else {
                 try {
                     taskManager.createTask(task);
-                    sendText(exchange, "Задача = " + task.getName() + " добавлена.", 201);
+                    sendText(exchange, String.format("Задача = %s добавлена.", task.getName()), 201);
                 } catch (TaskManagerException e) {
                     sendText(exchange, e.getMessage(), 405);
                 }
             }
         } catch (IOException exception) {
-            exception.printStackTrace();
+            System.err.println(exception.getMessage());
         } finally {
             exchange.close();
         }
@@ -175,20 +175,20 @@ public class HttpTaskServer {
             if (taskManager.getOneSubtask(subtask.getId()) != null) {
                 try {
                     taskManager.updateSubtask(subtask);
-                    sendText(exchange, "Подзадача = " + subtask.getName() + " обновлена.", 200);
+                    sendText(exchange, String.format("Подзадача = %s обновлена.", subtask.getName()), 200);
                 } catch (TaskManagerException e) {
                     sendText(exchange, e.getMessage(), 405);
                 }
             } else {
                 try {
                     taskManager.createSubtask(subtask);
-                    sendText(exchange, "Подзадача = " + subtask.getName() + " добавлена.", 201);
+                    sendText(exchange, String.format("Подзадача = %s добавлена.", subtask.getName()), 201);
                 } catch (TaskManagerException e) {
                     sendText(exchange, e.getMessage(), 405);
                 }
             }
         } catch (IOException exception) {
-            exception.printStackTrace();
+            System.err.println(exception.getMessage());
         } finally {
             exchange.close();
         }
@@ -200,20 +200,20 @@ public class HttpTaskServer {
             if (taskManager.getOneEpic(epic.getId()) != null) {
                 try {
                     taskManager.updateEpic(epic);
-                    sendText(exchange, "Большая задача = " + epic.getName() + " обновлена.", 200);
+                    sendText(exchange, String.format("Большая задача = %s обновлена.", epic.getName()), 200);
                 } catch (TaskManagerException e) {
                     sendText(exchange, e.getMessage(), 405);
                 }
             } else {
                 try {
                     taskManager.createEpic(epic);
-                    sendText(exchange, "Большая задача = " + epic.getName() + " добавлена.", 201);
+                    sendText(exchange, String.format("Большая задача = %s добавлена.", epic.getName()), 201);
                 } catch (TaskManagerException e) {
                     sendText(exchange, e.getMessage(), 405);
                 }
             }
         } catch (IOException exception) {
-            exception.printStackTrace();
+            System.err.println(exception.getMessage());
         } finally {
             exchange.close();
         }
@@ -276,7 +276,7 @@ public class HttpTaskServer {
                 }
             }
         } catch (IOException exception) {
-            exception.printStackTrace();
+            System.err.println(exception.getMessage());
         } finally {
             exchange.close();
         }
